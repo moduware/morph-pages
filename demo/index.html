@@ -22,7 +22,17 @@
       <h3>Basic morph-pages demo</h3>
       <demo-snippet>
         <template>
-          <morph-pages></morph-pages>
+          <morph-pages selected="0">
+            <div>One</div>
+            <div>Two</div>
+            <div>Three</div>
+          </morph-pages>
+          <script>
+            document.addEventListener('click', function(e) {
+              var pages = document.querySelector('morph-pages');
+              pages.selectNext();
+            });
+          </script>
         </template>
       </demo-snippet>
     </div>

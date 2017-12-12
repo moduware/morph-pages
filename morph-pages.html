@@ -1,40 +1,58 @@
-<link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../iron-pages/iron-pages.html">
 <link rel="import" href="../morph-element/morph-element.html">
 
 <dom-module id="morph-pages">
-  <template>
+  <template id="styles">
     <style>
       :host {
         display: block;
       }
     </style>
-    <h2>Hello [[prop1]]!</h2>
+
   </template>
 
   <script>
-
+    let subTemplate;
     const IronPagesSuperClass = customElements.get('iron-pages');
+
     /**
      * `morph-pages`
      * Pages element that morphs for current mobile OS
      *
      * @customElement
      * @polymer
-     * @demo demo/index.html
+     * @demo morph-pages/demo/index.html
      */
     class MorphPages extends MorphElement(IronPagesSuperClass) {
       static get is() { return 'morph-pages'; }
+
       static get properties() {
         return {
-          prop1: {
-            type: String,
-            value: 'morph-pages'
-          }
         };
       }
+
+      /**
+       * This will return our template inherited from superclass <iron-pages> with our styles inserted
+       */
+      static get template() {
+        if (!subTemplate) {
+          // first clone our superclass <iron-pages> template
+          let superClass = customElements.get('iron-pages');
+          subTemplate = superClass.template.cloneNode(true);
+          // here we will get the content of our <style> so we can insert them into the superclass <style>
+          // note the added id="styles" in our template tag above
+          const subStyle = Polymer.DomModule.import('morph-pages', 'template#styles').content;
+          // get the content of current style from superClass
+          const superStyle = subTemplate.content.querySelector('style');
+          // append our added style at the bottom of the current style to get higher priority
+          superStyle.parentNode.appendChild(subStyle);
+        }
+        return subTemplate;
+      }
+
     }
 
     window.customElements.define(MorphPages.is, MorphPages);
+
   </script>
 </dom-module>
