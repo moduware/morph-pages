@@ -1,0 +1,40 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="../morph-element/morph-element.html">
+
+<dom-module id="morph-pages">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]!</h2>
+  </template>
+
+  <script>
+
+    const IronPagesSuperClass = customElements.get('iron-pages');
+    /**
+     * `morph-pages`
+     * Pages element that morphs for current mobile OS
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class MorphPages extends MorphElement(IronPagesSuperClass) {
+      static get is() { return 'morph-pages'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'morph-pages'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(MorphPages.is, MorphPages);
+  </script>
+</dom-module>
