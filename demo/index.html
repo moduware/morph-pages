@@ -14,6 +14,37 @@
 
     <custom-style>
       <style is="custom-style" include="demo-pages-shared-styles">
+        .container {
+          position: relative;
+          width: 360px; height: 640px;
+          box-sizing: border-box;
+          border: 1px solid black;
+          overflow: hidden;
+        }
+
+        .background-red {
+          background-color: #d12f3d;
+          color: white;
+        }
+        
+        .background-green {
+          background-color: lime;
+        }
+
+        .background-blue {
+          background-color: deepskyblue;
+        }
+
+        morph-pages {
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          display: flex;
+        }
+
+        .page {
+          width: 100%;
+        }
+
       </style>
     </custom-style>
   </head>
@@ -22,11 +53,13 @@
       <h3>Basic morph-pages demo</h3>
       <demo-snippet>
         <template>
-          <morph-pages selected="0">
-            <div>One</div>
-            <div>Two</div>
-            <div>Three</div>
-          </morph-pages>
+          <div class="container">
+            <morph-pages selected="0" platform="android">
+              <div class="page background-red">One</div>
+              <div class="page background-green">Two</div>
+              <div class="page background-blue">Three</div>
+            </morph-pages>
+          </div>
           <script>
             document.addEventListener('click', function(e) {
               var pages = document.querySelector('morph-pages');
