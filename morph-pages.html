@@ -8,7 +8,7 @@
         position: relative;
         display: block;
 
-        --animation-duration: 2500ms;
+        --animation-duration: 250ms;
       }
 
       :host > ::slotted(:not(slot)) {
@@ -24,13 +24,18 @@
         pointer-events: none;
       }
 
-      .iron-current-forward {}
+      :host([platform="android"]) > ::slotted(.iron-current-forward) {
+      }
+
+      :host([platform="android"]) > ::slotted(.iron-next-forward) {
+        transform: translate3d(0, 56px, 0);
+        
+      }
+
       .iron-current-backward {}
-      .iron-next-forward {}
       .iron-next-backward {}
 
       :host([platform="android"]) > ::slotted(:not(slot)) {
-        transform: translate3d(0, 56px, 0);
         transition: opacity var(--animation-duration), transform var(--animation-duration);
       }
       
@@ -68,20 +73,25 @@
         };
       }
 
+      connectedCallback() {
+        super.connectedCallback();
+        const next = (this.selected + 1);
+        this.async(function () {
+          const next = (this.selected + 1) % this.items.length;
+          this.children[next].classList.add('iron-next-forward');
+        });
+      }
+
       selectNext() {
         const current = this.selected;
         const next = (this.selected + 1) % this.items.length;
+        const nextSetup = (this.selected + 2) % this.items.length;
 
-        // this.children[current].classList.add('iron-current-forward');
-        // this.children[next].classList.add('iron-next-forward');
-
-        // clearTimeout(animationTimeout);
-        // animationTimeout = setTimeout(() => {
-        //   this.children[current].classList.remove('iron-current-forward');
-        //   this.children[next].classList.remove('iron-next-forward');
-        // }, 2500);
-
-        console.log(current, next);
+        clearTimeout(animationTimeout);
+        animationTimeout = setTimeout(() => {
+          this.children[next].classList.remove('iron-next-forward');
+          this.children[nextSetup].classList.add('iron-next-forward');
+        }, 250);
         super.selectNext();
       }
 
