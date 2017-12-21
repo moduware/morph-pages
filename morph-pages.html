@@ -37,7 +37,7 @@
       }
 
       :host([platform="android"]) > ::slotted(.iron-next-backward) {
-        opacity: 1;
+        /* opacity: 1; */
       }
 
       :host([platform="android"]) > ::slotted(:not(slot)) {
@@ -49,7 +49,7 @@
       }
 
       :host([platform="android"]) > ::slotted(:not(slot).iron-selected) {
-        /* transform: translate3d(0, 0, 0); */
+        transform: translate3d(0, 0, 0);
       }
 
       
@@ -103,7 +103,7 @@
         animationTimeout = setTimeout(() => {
           this.children[next].classList.remove('iron-next-forward');
           this.children[nextSetup].classList.add('iron-next-forward');
-        }, 2500);
+        }, 250);
         super.selectNext();
       }
 
