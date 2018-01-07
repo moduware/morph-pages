@@ -95,9 +95,14 @@
       * This will add remove appropriete classes to selectNext() for transition to work
       */
       selectNext() {
+        const previous = (this.selected == '0') ? Number(this.items.length) - 1 : Number(this.selected) - 1;
         const current = this.selected;
         const next = (Number(this.selected) + 1) % this.items.length;
         const nextSetup = (Number(this.selected) + 2) % this.items.length;
+
+        // reposition iron-next-backwards class
+        this.children[previous].classList.remove('iron-next-backward');
+        this.children[current].classList.add('iron-next-backward');
 
         clearTimeout(animationTimeout);
         // add and remove appropriete classes for transition to work
@@ -109,7 +114,7 @@
       }
 
       /**
-      * This will add remove appropriete classes to selectProvious() for transition to work
+      * This will add remove appropriete classes to selectPrevious() for transition to work
       */
       selectPrevious() {
         const current = this.selected;
