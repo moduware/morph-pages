@@ -37,7 +37,8 @@
       }
 
       :host([platform="android"]) > ::slotted(.iron-next-backward) {
-        /* opacity: 1; */
+        opacity: 1;
+        z-index: -1;
       }
 
       :host([platform="android"]) > ::slotted(:not(slot)) {
@@ -124,6 +125,7 @@
           // remove classes after transition
           this.children[current].classList.remove('iron-current-backward');
           this.children[previous].classList.remove('iron-next-backward');
+          this.children[current].classList.add('iron-next-forward');
           this.children[nextBackwards].classList.add('iron-next-backward');
           super.selectPrevious();
         }, 250);
