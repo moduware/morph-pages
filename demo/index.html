@@ -10,6 +10,10 @@
 
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../app-layout/app-layout.html">
+    <link rel="import" href="../../app-layout/app-header/app-header.html">
+    <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+    <link rel="import" href="../../iron-icons/iron-icons.html">
     <link rel="import" href="../morph-pages.html">
 
     <custom-style>
@@ -20,6 +24,14 @@
           box-sizing: border-box;
           border: 1px solid black;
           overflow: hidden;
+        }
+
+        .header-container {
+          width: 360px;
+        }
+
+        app-toolbar {
+          padding: 0 0 0 0;
         }
 
         .background-red {
@@ -33,6 +45,14 @@
 
         .background-blue {
           background-color: deepskyblue;
+        }
+
+        .background-orange {
+          background-color: orange;
+        }
+
+        .background-yellow {
+          background-color: yellow;
         }
 
         morph-pages {
@@ -53,18 +73,37 @@
       <h3>Basic morph-pages demo</h3>
       <demo-snippet>
         <template>
+          <app-toolbar class="header-container">
+            <paper-icon-button icon="arrow-back" onclick="previousPage()"></paper-icon-button>
+            <div main-title>morph-pages</div>
+            <paper-icon-button icon="arrow-forward" onclick="nextPage()"></paper-icon-button>
+          </app-toolbar>
           <div class="container">
-            <morph-pages selected="0" platform="android">
+            <morph-pages selected="2" platform="android">
               <div class="page background-red">One</div>
               <div class="page background-green">Two</div>
               <div class="page background-blue">Three</div>
+              <div class="page background-orange">Four</div>
+              <div class="page background-yellow">Five</div>
             </morph-pages>
           </div>
           <script>
-            document.addEventListener('click', function(e) {
+            // document.addEventListener('click', function(e) {
+            //   var pages = document.querySelector('morph-pages');
+            //   // pages.selectPrevious();
+            //   pages.selectNext();
+            // });
+
+            previousPage = function() {
+              var pages = document.querySelector('morph-pages');
+              pages.selectPrevious();
+            };
+
+            nextPage = function() {
               var pages = document.querySelector('morph-pages');
               pages.selectNext();
-            });
+            };
+
           </script>
         </template>
       </demo-snippet>
