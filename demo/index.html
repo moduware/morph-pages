@@ -88,11 +88,17 @@
             </morph-pages>
           </div>
           <script>
+            /**
+            * move to previous page
+            */
             previousPage = function() {
               var pages = document.querySelector('morph-pages');
               pages.selectPrevious();
             };
 
+            /**
+            * move to next page
+            */ 
             nextPage = function() {
               var pages = document.querySelector('morph-pages');
               pages.selectNext();
