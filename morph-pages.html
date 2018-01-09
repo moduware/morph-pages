@@ -121,8 +121,9 @@
         const next = (Number(this.selected) + 1) % this.items.length;
         const previous = (this.selected == '0') ? Number(this.items.length) - 1 : Number(this.selected) - 1;
         const nextBackwards = (previous == '0') ? Number(this.items.length) - 1 : previous - 1;
-        // add classes for transition to trigger transitions
+        // move the transition class relative to iron-selected
         this.children[next].classList.remove('iron-next-forward');
+        this.children[current].classList.add('iron-next-forward');
         this.children[current].classList.add('iron-current-backward');
         
         clearTimeout(animationTimeout);
@@ -130,7 +131,6 @@
           // remove classes after transition
           this.children[current].classList.remove('iron-current-backward');
           this.children[previous].classList.remove('iron-next-backward');
-          this.children[current].classList.add('iron-next-forward');
           this.children[nextBackwards].classList.add('iron-next-backward');
           super.selectPrevious();
         }, 250);
