@@ -16,41 +16,49 @@
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
 
-        opacity: 1;
+        /* opacity: 1; */
       }
 
       :host > ::slotted(:not(slot):not(.iron-selected)) {
-        opacity: 0;
-        pointer-events: none;
+        z-index: 0;
       }
 
+      :host > ::slotted(:not(slot).iron-selected) {
+        z-index: 1;
+      }
+
+      /* DIRECTION FORWARD
       :host([platform="android"]) > ::slotted(.iron-current-forward) {
+        z-index: 0;
       }
 
       :host([platform="android"]) > ::slotted(.iron-next-forward) {
-        transform: translate3d(0, 56px, 0);
-      }
+        z-index: 1;
+      } */
+      /* DIRECTION END */
 
-      :host([platform="android"]) > ::slotted(.iron-current-backward) {
-        transform: translate3d(0, 56px, 0) !important;
-        opacity: 0;
-      }
+      /* DIRECTION BACKWARD */
+      /* :host([platform="android"]) > ::slotted(.iron-current-backward) { */
+        /* transform: translate3d(0, 56px, 0) !important;
+        opacity: 0; */
+      /* } */
 
-      :host([platform="android"]) > ::slotted(.iron-next-backward) {
-        opacity: 1;
-        z-index: -1;
-      }
+      /* :host([platform="android"]) > ::slotted(.iron-next-backward) { */
+        /* opacity: 1;
+        z-index: -1; */
+      /* } */
+      /* DIRECTION END */
 
       :host([platform="android"]) > ::slotted(:not(slot)) {
-        transition: opacity var(--animation-duration), transform var(--animation-duration);
+        /* transition: opacity var(--animation-duration), transform var(--animation-duration); */
       }
       
       :host([platform="android"]) > ::slotted(:not(slot):not(.iron-selected)) {
-        transition-duration: 0s;
+        /* transition-duration: 0s; */
       }
 
       :host([platform="android"]) > ::slotted(:not(slot).iron-selected) {
-        transform: translate3d(0, 0, 0);
+        /* transform: translate3d(0, 0, 0); */
       }
 
       
@@ -81,60 +89,80 @@
 
       connectedCallback() {
         super.connectedCallback();
+      }
 
-        this.async(function () {
-          const next = Number(this.selected) + 1;
-          const previous = (this.selected == '0') ? Number(this.items.length) - 1 : Number(this.selected) - 1;
-          // set up classes to give transitions
-          this.children[next].classList.add('iron-next-forward');
-          this.children[previous].classList.add('iron-next-backward');
+      goToPage(index) {
+        this.forwardAndroidAnimation(this.selected, index);
+      }
+
+      forwardAndroidAnimation(currentPageIndex, nextPageIndex) {
+        let self = this;
+
+        let props = {
+          duration: 250,
+          nextPageOffset: 56,
+          start: -1,
+          morphPages: self,
+          currentPage: this.children[currentPageIndex],
+          nextPage: this.children[nextPageIndex],
+          nextPageIndex: nextPageIndex
+        };
+
+        // Current page behind next page
+        props.currentPage.style.zIndex = 0;
+        props.nextPage.style.zIndex = 1;
+
+        // Initial setup
+        props.nextPage.style.transform = `translate3d(0, ${props.nextPageOffset}px, 0)`;
+        props.nextPage.style.opacity = 0;
+
+        window.requestAnimationFrame((timestamp) => {
+          self.forwardAndroidAnimationStep(props, this.forwardAndroidAnimationEnd, timestamp);
         });
+          
+      }
+
+      forwardAndroidAnimationStep(props, endCallback, timestamp) {
+        if (props.start == -1) props.start = timestamp;
+        
+        let progress = timestamp - props.start;
+        let opacity = progress / props.duration;
+        props.nextPage.style.opacity = opacity;
+
+        let offset = props.nextPageOffset - ((progress / props.duration) * props.nextPageOffset);
+        props.nextPage.style.transform = `translate3d(0, ${offset}px, 0)`;
+
+        if(progress < props.duration) {
+          window.requestAnimationFrame((timestamp) => this.forwardAndroidAnimationStep(props, this.forwardAndroidAnimationEnd, timestamp));
+        } else {
+          endCallback(props);
+        }
+      }
+
+      forwardAndroidAnimationEnd(props) {
+        props.nextPage.removeAttribute('style');
+        props.currentPage.removeAttribute('style');
+        props.morphPages.selected = props.nextPageIndex;
+      }
+
+      returnToPage(index) {
+        throw new DOMException('Not implemented');
       }
 
       /**
       * This will add remove appropriete classes to selectNext() for transition to work
       */
       selectNext() {
-        const previous = (this.selected == '0') ? Number(this.items.length) - 1 : Number(this.selected) - 1;
-        const current = this.selected;
         const next = (Number(this.selected) + 1) % this.items.length;
-        const nextSetup = (Number(this.selected) + 2) % this.items.length;
-
-        // reposition iron-next-backwards class
-        this.children[previous].classList.remove('iron-next-backward');
-        this.children[current].classList.add('iron-next-backward');
-
-        clearTimeout(animationTimeout);
-        // add and remove appropriete classes for transition to work
-        animationTimeout = setTimeout(() => {
-          this.children[next].classList.remove('iron-next-forward');
-          this.children[nextSetup].classList.add('iron-next-forward');
-        }, 250);
-        super.selectNext();
+        this.goToPage(next);
       }
 
       /**
       * This will add remove appropriete classes to selectPrevious() for transition to work
       */
       selectPrevious() {
-        const current = this.selected;
-        const next = (Number(this.selected) + 1) % this.items.length;
-        const previous = (this.selected == '0') ? Number(this.items.length) - 1 : Number(this.selected) - 1;
-        const nextBackwards = (previous == '0') ? Number(this.items.length) - 1 : previous - 1;
-        // move the transition class relative to iron-selected
-        this.children[next].classList.remove('iron-next-forward');
-        this.children[current].classList.add('iron-next-forward');
-        this.children[current].classList.add('iron-current-backward');
-        
-        clearTimeout(animationTimeout);
-        animationTimeout = setTimeout(() => {
-          // remove classes after transition
-          this.children[current].classList.remove('iron-current-backward');
-          this.children[previous].classList.remove('iron-next-backward');
-          this.children[nextBackwards].classList.add('iron-next-backward');
-          super.selectPrevious();
-        }, 250);
-        
+        // const previous = (this.selected == '0') ? Number(this.items.length) - 1 : Number(this.selected) - 1;
+        super.selectPrevious();
       }
 
       /**
