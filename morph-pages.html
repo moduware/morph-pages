@@ -114,7 +114,7 @@
         props.nextPage.style.opacity = 0;
 
         window.requestAnimationFrame((timestamp) => {
-          self.forwardAndroidAnimationStep(props, this.forwardAndroidAnimationEnd, timestamp);
+          self.forwardAndroidAnimationStep(props, this.AndroidAnimationEnd, timestamp);
         });
           
       }
@@ -130,13 +130,13 @@
         props.nextPage.style.transform = `translate3d(0, ${offset}px, 0)`;
 
         if(progress < props.duration) {
-          window.requestAnimationFrame((timestamp) => this.forwardAndroidAnimationStep(props, this.forwardAndroidAnimationEnd, timestamp));
+          window.requestAnimationFrame((timestamp) => this.forwardAndroidAnimationStep(props, this.AndroidAnimationEnd, timestamp));
         } else {
           endCallback(props);
         }
       }
 
-      forwardAndroidAnimationEnd(props) {
+      AndroidAnimationEnd(props) {
         props.nextPage.removeAttribute('style');
         props.currentPage.removeAttribute('style');
         props.morphPages.selected = props.nextPageIndex;
@@ -166,7 +166,7 @@
         props.nextPage.style.opacity = 0;
 
         window.requestAnimationFrame((timestamp) => {
-          self.backwardAndroidAnimationStep(props, this.backwardAndroidAnimationEnd, timestamp);
+          self.backwardAndroidAnimationStep(props, this.AndroidAnimationEnd, timestamp);
         });
 
       }
@@ -182,16 +182,10 @@
         props.currentPage.style.transform = `translate3d(0, ${offset}px, 0)`;
 
         if (progress < props.duration) {
-          window.requestAnimationFrame((timestamp) => this.backwardAndroidAnimationStep(props, this.backwardAndroidAnimationEnd, timestamp));
+          window.requestAnimationFrame((timestamp) => this.backwardAndroidAnimationStep(props, this.AndroidAnimationEnd, timestamp));
         } else {
           endCallback(props);
         }
-      }
-
-      backwardAndroidAnimationEnd(props) {
-        props.nextPage.removeAttribute('style');
-        props.currentPage.removeAttribute('style');
-        props.morphPages.selected = props.nextPageIndex;
       }
 
       /**
