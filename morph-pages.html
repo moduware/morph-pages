@@ -164,7 +164,6 @@
         props.nextPage.style.zIndex = 2;
 
         // Initial setup
-        props.nextPage.style.transform = `translate3d(0, ${props.nextPageOffset}px, 0)`;
         props.nextPage.style.opacity = 0;
 
         window.requestAnimationFrame((timestamp) => {
@@ -180,8 +179,8 @@
         let opacity = progress / props.duration;
         props.nextPage.style.opacity = opacity;
 
-        let offset = props.nextPageOffset - ((progress / props.duration) * props.nextPageOffset);
-        props.nextPage.style.transform = `translate3d(0, ${offset}px, 0)`;
+        let offset = ((progress / props.duration) * props.nextPageOffset);
+        props.currentPage.style.transform = `translate3d(0, ${offset}px, 0)`;
 
         if (progress < props.duration) {
           window.requestAnimationFrame((timestamp) => this.backwardAndroidAnimationStep(props, this.backwardAndroidAnimationEnd, timestamp));
