@@ -107,7 +107,8 @@
           nextPage: this.children[nextPageIndex],
           nextPageIndex: nextPageIndex
         };
-
+        console.log('currentPage', props.currentPage);
+        
         // Current page behind next page
         props.currentPage.style.zIndex = 0;
         props.nextPage.style.zIndex = 1;
@@ -146,7 +147,58 @@
       }
 
       returnToPage(index) {
-        throw new DOMException('Not implemented');
+        this.backwardAndroidAnimation(this.selected, index);
+      }
+
+      backwardAndroidAnimation(currentPageIndex, nextPageIndex) {
+        let self = this;
+
+        let props = {
+          duration: 250,
+          nextPageOffset: 56,
+          start: -1,
+          morphPages: self,
+          currentPage: this.children[currentPageIndex],
+          nextPage: this.children[nextPageIndex],
+          nextPageIndex: nextPageIndex
+        };
+        console.log('currentPage', props.currentPage);
+
+        // Current page behind next page
+        props.currentPage.style.zIndex = 0;
+        props.nextPage.style.zIndex = 1;
+
+        // Initial setup
+        props.nextPage.style.transform = `translate3d(0, ${props.nextPageOffset}px, 0)`;
+        props.nextPage.style.opacity = 0;
+
+        window.requestAnimationFrame((timestamp) => {
+          self.backwardAndroidAnimationStep(props, this.backwardAndroidAnimationEnd, timestamp);
+        });
+
+      }
+
+      backwardAndroidAnimationStep(props, endCallback, timestamp) {
+        if (props.start == -1) props.start = timestamp;
+
+        let progress = timestamp - props.start;
+        let opacity = progress / props.duration;
+        props.nextPage.style.opacity = opacity;
+
+        let offset = props.nextPageOffset - ((progress / props.duration) * props.nextPageOffset);
+        props.nextPage.style.transform = `translate3d(0, ${offset}px, 0)`;
+
+        if (progress < props.duration) {
+          window.requestAnimationFrame((timestamp) => this.backwardAndroidAnimationStep(props, this.backwardAndroidAnimationEnd, timestamp));
+        } else {
+          endCallback(props);
+        }
+      }
+
+      backwardAndroidAnimationEnd(props) {
+        props.nextPage.removeAttribute('style');
+        props.currentPage.removeAttribute('style');
+        props.morphPages.selected = props.nextPageIndex;
       }
 
       /**
@@ -161,8 +213,8 @@
       * This will add remove appropriete classes to selectPrevious() for transition to work
       */
       selectPrevious() {
-        // const previous = (this.selected == '0') ? Number(this.items.length) - 1 : Number(this.selected) - 1;
-        super.selectPrevious();
+        const previous = (this.selected == '0') ? Number(this.items.length) - 1 : Number(this.selected) - 1;
+        this.returnToPage(previous)
       }
 
       /**
