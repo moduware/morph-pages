@@ -105,7 +105,6 @@
           nextPage: this.children[nextPageIndex],
           nextPageIndex: nextPageIndex
         };
-        console.log('currentPage', props.currentPage);
         
         // Current page behind next page
         props.currentPage.style.zIndex = 1;
@@ -161,12 +160,12 @@
           nextPageIndex: nextPageIndex
         };
         // Current page behind next page
-        // props.currentPage.style.zIndex = 0;
-        props.nextPage.style.zIndex = 1;
+        props.currentPage.style.zIndex = 1;
+        props.nextPage.style.zIndex = 2;
 
         // Initial setup
         props.nextPage.style.transform = `translate3d(0, ${props.nextPageOffset}px, 0)`;
-        // props.nextPage.style.opacity = 0;
+        props.nextPage.style.opacity = 0;
 
         window.requestAnimationFrame((timestamp) => {
           self.backwardAndroidAnimationStep(props, this.backwardAndroidAnimationEnd, timestamp);
