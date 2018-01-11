@@ -15,8 +15,6 @@
         display: block !important;
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
-
-        /* opacity: 1; */
       }
 
       :host > ::slotted(:not(slot):not(.iron-selected)) {
@@ -110,8 +108,8 @@
         console.log('currentPage', props.currentPage);
         
         // Current page behind next page
-        props.currentPage.style.zIndex = 0;
-        props.nextPage.style.zIndex = 1;
+        props.currentPage.style.zIndex = 1;
+        props.nextPage.style.zIndex = 2;
 
         // Initial setup
         props.nextPage.style.transform = `translate3d(0, ${props.nextPageOffset}px, 0)`;
@@ -162,15 +160,13 @@
           nextPage: this.children[nextPageIndex],
           nextPageIndex: nextPageIndex
         };
-        console.log('currentPage', props.currentPage);
-
         // Current page behind next page
-        props.currentPage.style.zIndex = 0;
+        // props.currentPage.style.zIndex = 0;
         props.nextPage.style.zIndex = 1;
 
         // Initial setup
         props.nextPage.style.transform = `translate3d(0, ${props.nextPageOffset}px, 0)`;
-        props.nextPage.style.opacity = 0;
+        // props.nextPage.style.opacity = 0;
 
         window.requestAnimationFrame((timestamp) => {
           self.backwardAndroidAnimationStep(props, this.backwardAndroidAnimationEnd, timestamp);
@@ -202,7 +198,7 @@
       }
 
       /**
-      * This will add remove appropriete classes to selectNext() for transition to work
+      * This will add remove appropriate classes to selectNext() for transition to work
       */
       selectNext() {
         const next = (Number(this.selected) + 1) % this.items.length;
