@@ -144,31 +144,6 @@
         }
       }
 
-      backwardAndroidAnimation(currentPageIndex, nextPageIndex) {
-        let self = this;
-
-        let props = {
-          duration: 250,
-          nextPageOffset: 56,
-          start: -1,
-          morphPages: self,
-          currentPage: this.children[currentPageIndex],
-          nextPage: this.children[nextPageIndex],
-          nextPageIndex: nextPageIndex
-        };
-        // Current page behind next page
-        props.currentPage.style.zIndex = 1;
-        props.nextPage.style.zIndex = 2;
-
-        // Initial setup
-        props.nextPage.style.opacity = 0;
-
-        window.requestAnimationFrame((timestamp) => {
-          self.backwardAndroidAnimationStep(props, androidAnimationEnd, timestamp);
-        });
-
-      }
-
       backwardAndroidAnimationStep(props, endCallback, timestamp) {
         if (props.start == -1) props.start = timestamp;
 
