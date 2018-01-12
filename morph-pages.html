@@ -89,13 +89,18 @@
       connectedCallback() {
         super.connectedCallback();
       }
-
+      
       goToPage(index) {
         const direction = 'forward';
-        this.AndroidAnimation(this.selected, index, direction);
+        this.androidAnimation(this.selected, index, direction);
+      }
+      
+      returnToPage(index) {
+        const direction = 'backward';
+        this.androidAnimation(this.selected, index, direction);
       }
 
-      AndroidAnimation(currentPageIndex, nextPageIndex, direction) {
+      androidAnimation(currentPageIndex, nextPageIndex, direction) {
         let self = this;
 
         let props = {
@@ -116,15 +121,12 @@
         props.nextPage.style.opacity = 0;
 
         window.requestAnimationFrame((timestamp) => {
-          if (direction == 'forward') {
-            self[direction + 'AndroidAnimationStep'](props, androidAnimationEnd, timestamp, direction);
-            // self.forwardAndroidAnimationStep(props, this.AndroidAnimationEnd, timestamp, direction);
-          }
+          self[direction + 'AndroidAnimationStep'](props, androidAnimationEnd, timestamp);
         });
 
       }
 
-      forwardAndroidAnimationStep(props, endCallback, timestamp, direction) {
+      forwardAndroidAnimationStep(props, endCallback, timestamp) {
         if (props.start == -1) props.start = timestamp;
         
         let progress = timestamp - props.start;
@@ -140,10 +142,6 @@
         } else {
           endCallback(props);
         }
-      }
-
-      returnToPage(index) {
-        this.backwardAndroidAnimation(this.selected, index);
       }
 
       backwardAndroidAnimation(currentPageIndex, nextPageIndex) {
