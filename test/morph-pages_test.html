@@ -95,6 +95,7 @@
 
             it('should have selected item z-index:1 and all others are z-index:0', function() {
               pages.items.forEach(function(page) {
+                // selected pages have z-index: 1 and all the rest should have z-index: 0
                 expect(getComputedStyle(page).zIndex).to.be.equal(page == pages.selectedItem ? '1' : '0');
               });
             });
