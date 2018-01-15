@@ -74,34 +74,34 @@
             
           });
 
-          describe('when selected is set', () => {
-            beforeEach(function(done) {
-              pages = fixture('selected');
-              // to make sure iron-items is visible before running test
-              pages.addEventListener('iron-items-changed', function onIronItemsChanged() {
-                pages.removeEventListener('iron-items-changed', onIronItemsChanged);
-                done();
-              });
-
+        }); // end of basic
+        
+        describe('when selected is set', () => {
+          beforeEach(function(done) {
+            pages = fixture('selected');
+            // to make sure iron-items is visible before running test
+            pages.addEventListener('iron-items-changed', function onIronItemsChanged() {
+              pages.removeEventListener('iron-items-changed', onIronItemsChanged);
+              done();
             });
 
-            it('should have a selected value of 0', function() {
-              expect(pages.selected).to.be.equal('0');
-            });
+          });
 
-            it('should have selected item with index 0', function() {
-              expect(pages.selectedItem).to.be.equal(pages.items[0]);
-            });
+          it('should have a selected value of 0', function() {
+            expect(pages.selected).to.be.equal('0');
+          });
 
-            it('should have selected item z-index:1 and all others are z-index:0', function() {
-              pages.items.forEach(function(page) {
-                // selected pages have z-index: 1 and all the rest should have z-index: 0
-                expect(getComputedStyle(page).zIndex).to.be.equal(page == pages.selectedItem ? '1' : '0');
-              });
+          it('should have selected item with index 0', function() {
+            expect(pages.selectedItem).to.be.equal(pages.items[0]);
+          });
+
+          it('should have selected item z-index:1 and all others are z-index:0', function() {
+            pages.items.forEach(function(page) {
+              // selected pages have z-index: 1 and all the rest should have z-index: 0
+              expect(getComputedStyle(page).zIndex).to.be.equal(page == pages.selectedItem ? '1' : '0');
             });
           });
-        });
-
+        }); // end of 'when selected is set'
 
         // NOTES:
 
