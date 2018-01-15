@@ -24,6 +24,17 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="selected">
+      <template>
+        <morph-pages selected="0">
+          <div id="page0">Page 0</div>
+          <div id="page1">Page 1</div>
+          <div id="page2">Page 2</div>
+          <div id="page3">Page 3</div>
+        </morph-pages>
+      </template>
+    </test-fixture>
+
     <script>
       describe('morph-pages', () => {
         let pages;
@@ -61,6 +72,32 @@
               expect(getComputedStyle(page).zIndex).to.be.equal('0');
             });
             
+          });
+
+          describe('when selected is set', () => {
+            beforeEach(function(done) {
+              pages = fixture('selected');
+              // to make sure iron-items is visible before running test
+              pages.addEventListener('iron-items-changed', function onIronItemsChanged() {
+                pages.removeEventListener('iron-items-changed', onIronItemsChanged);
+                done();
+              });
+
+            });
+
+            it('should have a selected value of 0', function() {
+              expect(pages.selected).to.be.equal('0');
+            });
+
+            it('should have selected item with index 0', function() {
+              expect(pages.selectedItem).to.be.equal(pages.items[0]);
+            });
+
+            it('should have selected item z-index:1 and all others are z-index:0', function() {
+              pages.items.forEach(function(page) {
+                expect(getComputedStyle(page).zIndex).to.be.equal(page == pages.selectedItem ? '1' : '0');
+              });
+            });
           });
         });
 
