@@ -24,43 +24,7 @@
 
       :host > ::slotted(:not(slot).iron-selected) {
         z-index: 1;
-      }
-
-      /* DIRECTION FORWARD
-      :host([platform="android"]) > ::slotted(.iron-current-forward) {
-        z-index: 0;
-      }
-
-      :host([platform="android"]) > ::slotted(.iron-next-forward) {
-        z-index: 1;
-      } */
-      /* DIRECTION END */
-
-      /* DIRECTION BACKWARD */
-      /* :host([platform="android"]) > ::slotted(.iron-current-backward) { */
-        /* transform: translate3d(0, 56px, 0) !important;
-        opacity: 0; */
-      /* } */
-
-      /* :host([platform="android"]) > ::slotted(.iron-next-backward) { */
-        /* opacity: 1;
-        z-index: -1; */
-      /* } */
-      /* DIRECTION END */
-
-      :host([platform="android"]) > ::slotted(:not(slot)) {
-        /* transition: opacity var(--animation-duration), transform var(--animation-duration); */
-      }
-      
-      :host([platform="android"]) > ::slotted(:not(slot):not(.iron-selected)) {
-        /* transition-duration: 0s; */
-      }
-
-      :host([platform="android"]) > ::slotted(:not(slot).iron-selected) {
-        /* transform: translate3d(0, 0, 0); */
-      }
-
-      
+      } 
     </style>
 
   </template>
@@ -92,38 +56,53 @@
       
       goToPage(index) {
         const direction = 'forward';
-        this.androidAnimation(this.selected, index, direction);
+        this.changePage(index, direction);
       }
       
       returnToPage(index) {
-        const direction = 'backward';
-        this.androidAnimation(this.selected, index, direction);
+        const direction = 'backward'; 
+        this.changePage(index, direction);
+      }
+
+      changePage(index, direction) {
+        let animation;
+
+        if(this.platform == 'android') {
+          animation = this.androidAnimation(this.selected, index, direction);  
+        } else if(this.platform == 'ios') {
+          // TODO: run ios animation
+        }
+        animation.then(() => this.selected = index);
       }
 
       androidAnimation(currentPageIndex, nextPageIndex, direction) {
-        let self = this;
+        return new Promise((resolve, reject) => {
+          let self = this;
 
-        let props = {
-          duration: 250,
-          nextPageOffset: 56,
-          start: -1,
-          morphPages: self,
-          currentPage: this.children[currentPageIndex],
-          nextPage: this.children[nextPageIndex],
-          nextPageIndex: nextPageIndex
-        };
+          let props = {
+            duration: 250,
+            nextPageOffset: 56,
+            start: -1,
+            morphPages: self,
+            currentPage: this.children[currentPageIndex],
+            nextPage: this.children[nextPageIndex],
+            nextPageIndex: nextPageIndex
+          };
 
-        // Current page behind next page
-        props.currentPage.style.zIndex = 1;
-        props.nextPage.style.zIndex = 2;
+          // Current page behind next page
+          props.currentPage.style.zIndex = 1;
+          props.nextPage.style.zIndex = 2;
 
-        // Initial setup
-        props.nextPage.style.opacity = 0;
+          // Initial setup
+          props.nextPage.style.opacity = 0;
 
-        window.requestAnimationFrame((timestamp) => {
-          self[direction + 'AndroidAnimationStep'](props, androidAnimationEnd, timestamp);
+          window.requestAnimationFrame((timestamp) => {
+            self[direction + 'AndroidAnimationStep'](props, () => {
+              androidAnimationEnd(props);
+              resolve();
+            }, timestamp);
+          });
         });
-
       }
 
       forwardAndroidAnimationStep(props, endCallback, timestamp) {
@@ -138,7 +117,7 @@
         props.nextPage.style.transform = `translate3d(0, ${offset}px, 0)`;
 
         if(progress < props.duration) {
-          window.requestAnimationFrame((timestamp) => this.forwardAndroidAnimationStep(props, androidAnimationEnd, timestamp));
+          window.requestAnimationFrame((timestamp) => this.forwardAndroidAnimationStep(props, endCallback, timestamp));
         } else {
           endCallback(props);
         }
@@ -156,7 +135,7 @@
 
         if (progress < props.duration) {
           window.requestAnimationFrame((timestamp) => {
-            this.backwardAndroidAnimationStep(props, androidAnimationEnd, timestamp)
+            this.backwardAndroidAnimationStep(props, endCallback, timestamp)
           });
         } else {
           endCallback(props);
