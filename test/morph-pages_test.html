@@ -13,37 +13,63 @@
   </head>
   <body>
 
-    <test-fixture id="BasicTestFixture">
+    <test-fixture id="basic">
       <template>
-        <morph-pages></morph-pages>
-      </template>
-    </test-fixture>
-
-    <test-fixture id="ChangedPropertyTestFixture">
-      <template>
-        <morph-pages prop1="new-prop1"></morph-pages>
+        <morph-pages>
+          <div id="page0">Page 0</div>
+          <div id="page1">Page 1</div>
+          <div id="page2">Page 2</div>
+          <div id="page3">Page 3</div>
+        </morph-pages>
       </template>
     </test-fixture>
 
     <script>
-      suite('morph-pages', () => {
+      describe('morph-pages', () => {
+        let pages;
 
-        test('instantiating the element with default properties works', () => {
-          const element = fixture('BasicTestFixture');
-          assert.equal(element.prop1, 'morph-pages');
-          const elementShadowRoot = element.shadowRoot;
-          const elementHeader = elementShadowRoot.querySelector('h2');
-          assert.equal(elementHeader.innerHTML, 'Hello morph-pages!');
+        describe('basic defaults', () => {
+          beforeEach(function(done) {
+            pages = fixture('basic');
+            // to make sure iron-items is visible before running test
+            pages.addEventListener('iron-items-changed', function onIronItemsChanged() {
+              pages.removeEventListener('iron-items-changed', onIronItemsChanged);
+              done();
+            });
+          });
+
+          it('should have nothing selected', function() {
+            expect(pages.selected).to.be.equal(undefined);
+          });
+
+          it('should have null activateEvent', function() {
+            // `activateEvent` is not a useful feature for iron-pages and it can interfere
+            // with ux; ensure iron-pages has cleared any default `activateEvent`
+            expect(pages.activateEvent).to.be.equal(null);
+          });
+
+          it('should have iron-selected as selectedClass', function() {
+            expect(pages.selectedClass).to.be.equal('iron-selected');
+          });
+
+          it('should have as many items as children', function() {
+            expect(pages.items.length).to.be.equal(4);
+          });
+
+          it('should have all pages are z-index:0', function() {
+            pages.items.forEach(function(page) {
+              expect(getComputedStyle(page).zIndex).to.be.equal('0');
+            });
+            
+          });
         });
 
-        test('setting a property on the element works', () => {
-          // Create a test fixture
-          const element = fixture('ChangedPropertyTestFixture');
-          assert.equal(element.prop1, 'new-prop1');
-          const elementShadowRoot = element.shadowRoot;
-          const elementHeader = elementShadowRoot.querySelector('h2');
-          assert.equal(elementHeader.innerHTML, 'Hello new-prop1!');
-        });
+
+        // NOTES:
+
+        // const elementShadowRoot = element.shadowRoot;
+        // const elementHeader = elementShadowRoot.querySelector('h2');
+        // expect(elementHeader.innerHTML).to.be.equal('Hello morph-pages!');
 
       });
     </script>
