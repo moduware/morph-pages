@@ -82,7 +82,7 @@
           let self = this;
 
           let props = {
-              duration: 400,
+              duration: 4000,
               pageOffsetLeftMax: -20, // percent
               pageOffsetRightMax: 100, // percent
               start: -1,
@@ -101,8 +101,9 @@
 
               props.currentPage.style.transform = `translate3d(0,0,0)`;
               props.nextPage.style.transform = `translate3d(${props.nextPageOffset}%,0,0)`;
-              // TODO: next page initial shadow conf
-              // TODO: overlay initial state
+              
+              // TODO: create shadow element in next page, with opacity 0
+              // TODO: create overlay element in current page, with opacity 0
             } else if(direction == 'backward') {
               // Next page behind current page
               props.nextPage.style.zIndex = 1;
@@ -110,11 +111,16 @@
               
               props.currentPage.style.transform = `translate3d(0,0,0)`;
               props.nextPage.style.transform = `translate3d(${props.pageOffsetLeftMax}%,0,0)`;
+
+              // TODO: create shadow element in current page, with opacity 0
+              // TODO: create overlay element in next page, with opacity 0
             }
 
             window.requestAnimationFrame((timestamp) => {
               self[direction + 'IosAnimationStep'](props, () => {
                 androidAnimationEnd(props);
+                // TODO: remove shadow element from current or next page
+                // TODO: remove overlay element from current or next page
                 resolve();
               }, timestamp);
             });
@@ -132,6 +138,9 @@
         
         props.currentPage.style.transform = `translate3d(${currentPageOffset}%,0,0)`;
         props.nextPage.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
+
+        // TODO: change shadow opacity from 0 to 1
+        // TODO: change overlay opacity from 0 to 1
 
         if(progress < props.duration) {
           window.requestAnimationFrame((timestamp) => this.forwardIosAnimationStep(props, endCallback, timestamp));
@@ -151,6 +160,9 @@
         
         props.currentPage.style.transform = `translate3d(${currentPageOffset}%,0,0)`;
         props.nextPage.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
+
+        // TODO: change shadow opacity from 1 to 0
+        // TODO: change overlay opacity from 1 to 0
 
         if(progress < props.duration) {
           window.requestAnimationFrame((timestamp) => this.backwardIosAnimationStep(props, endCallback, timestamp));
