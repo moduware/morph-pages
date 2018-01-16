@@ -83,8 +83,8 @@
 
           let props = {
               duration: 400,
-              currentPageOffsetEnd: -20, // percent
-              nextPageOffsetStart: 100, // percent
+              pageOffsetLeftMax: -20, // percent
+              pageOffsetRightMax: 100, // percent
               start: -1,
               morphPages: self,
               currentPage: this.children[currentPageIndex],
@@ -92,18 +92,24 @@
               nextPageIndex: nextPageIndex
             };
 
-            // Current page behind next page
-            props.currentPage.style.zIndex = 1;
-            props.nextPage.style.zIndex = 2;
-
+            
             // Transitions for pages
             if(direction == 'forward') {
+              // Current page behind next page
+              props.currentPage.style.zIndex = 1;
+              props.nextPage.style.zIndex = 2;
+
               props.currentPage.style.transform = `translate3d(0,0,0)`;
               props.nextPage.style.transform = `translate3d(${props.nextPageOffset}%,0,0)`;
               // TODO: next page initial shadow conf
               // TODO: overlay initial state
             } else if(direction == 'backward') {
-              // TODO: define initial state for backward animation
+              // Next page behind current page
+              props.nextPage.style.zIndex = 1;
+              props.currentPage.style.zIndex = 2;
+              
+              props.currentPage.style.transform = `translate3d(0,0,0)`;
+              props.nextPage.style.transform = `translate3d(${props.pageOffsetLeftMax}%,0,0)`;
             }
 
             window.requestAnimationFrame((timestamp) => {
@@ -121,14 +127,33 @@
         let timing = progress/props.duration;
         if(timing > 1) timing = 1;
 
-        const currentPageOffset = this.easeInOutQuad(timing) * props.currentPageOffsetEnd;
-        const nextPageOffset = 100 - this.easeInOutQuad(timing) * props.nextPageOffsetStart;
+        const currentPageOffset = this.easeInOutQuad(timing) * props.pageOffsetLeftMax;
+        const nextPageOffset = 100 - this.easeInOutQuad(timing) * props.pageOffsetRightMax;
         
         props.currentPage.style.transform = `translate3d(${currentPageOffset}%,0,0)`;
         props.nextPage.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
 
         if(progress < props.duration) {
           window.requestAnimationFrame((timestamp) => this.forwardIosAnimationStep(props, endCallback, timestamp));
+        } else {
+          endCallback(props);
+        }
+      }
+
+      backwardIosAnimationStep(props, endCallback, timestamp) {
+        if (props.start == -1) props.start = timestamp;
+        const progress = timestamp - props.start;
+        let timing = progress/props.duration;
+        if(timing > 1) timing = 1;
+
+        const currentPageOffset = this.easeInOutQuad(timing) * props.pageOffsetRightMax;
+        const nextPageOffset = props.pageOffsetLeftMax - this.easeInOutQuad(timing) * props.pageOffsetLeftMax;
+        
+        props.currentPage.style.transform = `translate3d(${currentPageOffset}%,0,0)`;
+        props.nextPage.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
+
+        if(progress < props.duration) {
+          window.requestAnimationFrame((timestamp) => this.backwardIosAnimationStep(props, endCallback, timestamp));
         } else {
           endCallback(props);
         }
