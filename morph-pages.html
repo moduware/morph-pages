@@ -70,9 +70,68 @@
         if(this.platform == 'android') {
           animation = this.androidAnimation(this.selected, index, direction);  
         } else if(this.platform == 'ios') {
-          // TODO: run ios animation
+          animation = this.iosAnimation(this.selected, index, direction);
         }
         animation.then(() => this.selected = index);
+      }
+
+      easeInOutQuad(t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t }
+
+      iosAnimation(currentPageIndex, nextPageIndex, direction) {
+        return new Promise((resolve, reject) => {
+          let self = this;
+
+          let props = {
+              duration: 400,
+              currentPageOffsetEnd: -20, // percent
+              nextPageOffsetStart: 100, // percent
+              start: -1,
+              morphPages: self,
+              currentPage: this.children[currentPageIndex],
+              nextPage: this.children[nextPageIndex],
+              nextPageIndex: nextPageIndex
+            };
+
+            // Current page behind next page
+            props.currentPage.style.zIndex = 1;
+            props.nextPage.style.zIndex = 2;
+
+            // Transitions for pages
+            if(direction == 'forward') {
+              props.currentPage.style.transform = `translate3d(0,0,0)`;
+              props.nextPage.style.transform = `translate3d(${props.nextPageOffset}%,0,0)`;
+              // TODO: next page initial shadow conf
+              // TODO: overlay initial state
+            } else if(direction == 'backward') {
+              // TODO: define initial state for backward animation
+            }
+
+            window.requestAnimationFrame((timestamp) => {
+              self[direction + 'IosAnimationStep'](props, () => {
+                androidAnimationEnd(props);
+                resolve();
+              }, timestamp);
+            });
+        });
+      }
+
+      forwardIosAnimationStep(props, endCallback, timestamp) {
+        if (props.start == -1) props.start = timestamp;
+        const progress = timestamp - props.start;
+        let timing = progress/props.duration;
+        if(timing > 1) timing = 1;
+
+        const currentPageOffset = this.easeInOutQuad(timing) * props.currentPageOffsetEnd;
+        const nextPageOffset = 100 - this.easeInOutQuad(timing) * props.nextPageOffsetStart;
+        
+        props.currentPage.style.transform = `translate3d(${currentPageOffset}%,0,0)`;
+        props.nextPage.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
+
+        if(progress < props.duration) {
+          window.requestAnimationFrame((timestamp) => this.forwardIosAnimationStep(props, endCallback, timestamp));
+        } else {
+          endCallback(props);
+        }
       }
 
       androidAnimation(currentPageIndex, nextPageIndex, direction) {
