@@ -24,7 +24,7 @@
 
       :host > ::slotted(:not(slot).iron-selected) {
         z-index: 1;
-      } 
+      }
     </style>
 
   </template>
@@ -32,6 +32,8 @@
   <script>
     let subTemplate;
     let animationTimeout = null;
+    let shadowElement, wrapper = null;
+    let requestAnimationId;
     const IronPagesSuperClass = customElements.get('iron-pages');
 
     /**
@@ -75,55 +77,89 @@
         animation.then(() => this.selected = index);
       }
 
+      cancelAnimationAndRemoveElem(wrapper, nextPageIndex) {
+        if (wrapper) {
+          wrapper.parentNode.removeChild(wrapper);
+          cancelAnimationFrame(requestAnimationId);
+          // this.selected = nextPageIndex;
+        }
+      }
+
       easeInOutQuad(t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t }
 
       iosAnimation(currentPageIndex, nextPageIndex, direction) {
         return new Promise((resolve, reject) => {
           let self = this;
 
+          this.cancelAnimationAndRemoveElem(wrapper, nextPageIndex);
+
           let props = {
-              duration: 4000,
-              pageOffsetLeftMax: -20, // percent
-              pageOffsetRightMax: 100, // percent
-              start: -1,
-              morphPages: self,
-              currentPage: this.children[currentPageIndex],
-              nextPage: this.children[nextPageIndex],
-              nextPageIndex: nextPageIndex
-            };
+            duration: 400,
+            pageOffsetLeftMax: -20, // percent
+            pageOffsetRightMax: 100, // percent
+            start: -1,
+            morphPages: self,
+            currentPage: this.children[currentPageIndex],
+            nextPage: this.children[nextPageIndex],
+            nextPageIndex: nextPageIndex
+          };
 
+          // FIXME: refactor this to maybe a function and move the whole creation of wrapper and shadowElement
+          wrapper = document.createElement('div');
+          shadowElement = document.createElement('div');
+          wrapper.style.width = `100%`;
+          wrapper.style.zIndex = `3`;
+          wrapper.style.transform = `translate3d(100%,0,0)`;
+          shadowElement.style.background = `linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 10%, rgba(0,0,0,0.01) 50%, rgba(0,0,0,0.2) 100%)`;
+          shadowElement.style.position = `absolute`;
+          shadowElement.style.top = `0`;
+          shadowElement.style.width = `16px`;
+          shadowElement.style.zIndex = `99999`;
+          shadowElement.style.left = `-16px`;
+          shadowElement.style.bottom = `0`;
+
+          // Transitions for pages
+          if(direction == 'forward') {
+            shadowElement.style.opacity = 0;
+            props.nextPage.insertAdjacentElement('afterend', wrapper);
+            wrapper.insertAdjacentElement('afterbegin', shadowElement);
+
+            // Current page behind next page
+            props.currentPage.style.zIndex = 1;
+            props.nextPage.style.zIndex = 2;
+
+            props.currentPage.style.transform = `translate3d(0,0,0)`;
+            props.nextPage.style.transform = `translate3d(${props.nextPageOffset}%,0,0)`;
             
-            // Transitions for pages
-            if(direction == 'forward') {
-              // Current page behind next page
-              props.currentPage.style.zIndex = 1;
-              props.nextPage.style.zIndex = 2;
+            // TODO: create shadow element in next page, with opacity 0
+            // TODO: create overlay element in current page, with opacity 0
+          } else if(direction == 'backward') {
+            // FIXME: this opacity should be reverse direction if backwards
+            shadowElement.style.opacity = 1; 
+            props.currentPage.insertAdjacentElement('afterend', wrapper);
+            wrapper.insertAdjacentElement('afterbegin', shadowElement);
 
-              props.currentPage.style.transform = `translate3d(0,0,0)`;
-              props.nextPage.style.transform = `translate3d(${props.nextPageOffset}%,0,0)`;
-              
-              // TODO: create shadow element in next page, with opacity 0
-              // TODO: create overlay element in current page, with opacity 0
-            } else if(direction == 'backward') {
-              // Next page behind current page
-              props.nextPage.style.zIndex = 1;
-              props.currentPage.style.zIndex = 2;
-              
-              props.currentPage.style.transform = `translate3d(0,0,0)`;
-              props.nextPage.style.transform = `translate3d(${props.pageOffsetLeftMax}%,0,0)`;
+            // Next page behind current page
+            props.nextPage.style.zIndex = 1;
+            props.currentPage.style.zIndex = 2;
+            
+            props.currentPage.style.transform = `translate3d(0,0,0)`;
+            props.nextPage.style.transform = `translate3d(${props.pageOffsetLeftMax}%,0,0)`;
+            
+            // TODO: create shadow element in current page, with opacity 0
+            // TODO: create overlay element in next page, with opacity 0
+          }
 
-              // TODO: create shadow element in current page, with opacity 0
-              // TODO: create overlay element in next page, with opacity 0
-            }
-
-            window.requestAnimationFrame((timestamp) => {
-              self[direction + 'IosAnimationStep'](props, () => {
-                androidAnimationEnd(props);
-                // TODO: remove shadow element from current or next page
-                // TODO: remove overlay element from current or next page
-                resolve();
-              }, timestamp);
-            });
+          requestAnimationId = window.requestAnimationFrame((timestamp) => {
+            self[direction + 'IosAnimationStep'](props, () => {
+              androidAnimationEnd(props);
+              // FIXME: remove shadow element from current or next page AND everything click forward or backward
+              wrapper.parentNode.removeChild(wrapper);
+              wrapper = null;
+              // TODO: remove overlay element from current or next page
+              resolve();
+            }, timestamp);
+          });
         });
       }
 
@@ -133,17 +169,22 @@
         let timing = progress/props.duration;
         if(timing > 1) timing = 1;
 
+        // TODO: change shadow opacity from 0 to 1
+        let opacity = progress / props.duration;
+        shadowElement.style.opacity = opacity;
+
         const currentPageOffset = this.easeInOutQuad(timing) * props.pageOffsetLeftMax;
         const nextPageOffset = 100 - this.easeInOutQuad(timing) * props.pageOffsetRightMax;
         
         props.currentPage.style.transform = `translate3d(${currentPageOffset}%,0,0)`;
         props.nextPage.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
+        // add shadow container transform
+        wrapper.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
 
-        // TODO: change shadow opacity from 0 to 1
         // TODO: change overlay opacity from 0 to 1
 
         if(progress < props.duration) {
-          window.requestAnimationFrame((timestamp) => this.forwardIosAnimationStep(props, endCallback, timestamp));
+          requestAnimationId = window.requestAnimationFrame((timestamp) => this.forwardIosAnimationStep(props, endCallback, timestamp));
         } else {
           endCallback(props);
         }
@@ -155,9 +196,15 @@
         let timing = progress/props.duration;
         if(timing > 1) timing = 1;
 
+        // TODO: change shadow opacity from 1 to 0
+        let opacity = 1 - progress / props.duration;
+        shadowElement.style.opacity = opacity;
+
         const currentPageOffset = this.easeInOutQuad(timing) * props.pageOffsetRightMax;
         const nextPageOffset = props.pageOffsetLeftMax - this.easeInOutQuad(timing) * props.pageOffsetLeftMax;
         
+        // add shadow container transform
+        wrapper.style.transform = `translate3d(${currentPageOffset}%,0,0)`;
         props.currentPage.style.transform = `translate3d(${currentPageOffset}%,0,0)`;
         props.nextPage.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
 
@@ -165,7 +212,7 @@
         // TODO: change overlay opacity from 1 to 0
 
         if(progress < props.duration) {
-          window.requestAnimationFrame((timestamp) => this.backwardIosAnimationStep(props, endCallback, timestamp));
+          requestAnimationId = window.requestAnimationFrame((timestamp) => this.backwardIosAnimationStep(props, endCallback, timestamp));
         } else {
           endCallback(props);
         }
