@@ -28,7 +28,7 @@
 
         .page {
           width: 100%;
-          color: white;
+          color: red;
         }
 
         .header-container {
@@ -37,6 +37,10 @@
 
         app-toolbar {
           padding: 0 0 0 0;
+        }
+
+        .background-white {
+          background-color: white;
         }
 
         .background-red {
@@ -64,7 +68,6 @@
           top: 0; left: 0; right: 0; bottom: 0;
           display: flex;
         }
-
       </style>
     </custom-style>
   </head>
@@ -80,11 +83,11 @@
           </app-toolbar>
           <div class="container">
             <morph-pages selected="2" platform="ios">
-              <div class="page background-red">One</div>
-              <div class="page background-green">Two</div>
-              <div class="page background-blue">Three</div>
-              <div class="page background-orange">Four</div>
-              <div class="page background-yellow">Five</div>
+              <div class="page background-white">One</div>
+              <div class="page background-white">Two</div>
+              <div class="page background-white">Three</div>
+              <div class="page background-white">Four</div>
+              <div class="page background-white">Five</div>
             </morph-pages>
           </div>
 
