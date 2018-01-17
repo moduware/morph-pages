@@ -87,36 +87,46 @@
 
       easeInOutQuad(t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t }
 
+      iosAnimationProps(props, currentPageIndex, nextPageIndex) {
+        props = {
+          duration: 400,
+          pageOffsetLeftMax: -20, // percent
+          pageOffsetRightMax: 100, // percent
+          start: -1,
+          morphPages: self,
+          currentPage: this.children[currentPageIndex],
+          nextPage: this.children[nextPageIndex],
+          nextPageIndex: nextPageIndex
+        };
+        return props;
+      }
+
+      createWrapperAndShadowElem() {
+        wrapper = document.createElement('div');
+        shadowElement = document.createElement('div');
+        wrapper.style.width = `100%`;
+        wrapper.style.zIndex = `3`;
+        wrapper.style.transform = `translate3d(100%,0,0)`;
+        shadowElement.style.background = `linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 10%, rgba(0,0,0,0.01) 50%, rgba(0,0,0,0.2) 100%)`;
+        shadowElement.style.position = `absolute`;
+        shadowElement.style.top = `0`;
+        shadowElement.style.width = `16px`;
+        shadowElement.style.zIndex = `99999`;
+        shadowElement.style.left = `-16px`;
+        shadowElement.style.bottom = `0`;
+      }
+
       iosAnimation(currentPageIndex, nextPageIndex, direction) {
         return new Promise((resolve, reject) => {
           let self = this;
+          let props;
 
           this.cancelAnimationAndRemoveElem(wrapper, nextPageIndex);
 
-          let props = {
-            duration: 400,
-            pageOffsetLeftMax: -20, // percent
-            pageOffsetRightMax: 100, // percent
-            start: -1,
-            morphPages: self,
-            currentPage: this.children[currentPageIndex],
-            nextPage: this.children[nextPageIndex],
-            nextPageIndex: nextPageIndex
-          };
+          props = this.iosAnimationProps(props, currentPageIndex, nextPageIndex);
 
           // FIXME: refactor this to maybe a function and move the whole creation of wrapper and shadowElement
-          wrapper = document.createElement('div');
-          shadowElement = document.createElement('div');
-          wrapper.style.width = `100%`;
-          wrapper.style.zIndex = `3`;
-          wrapper.style.transform = `translate3d(100%,0,0)`;
-          shadowElement.style.background = `linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 10%, rgba(0,0,0,0.01) 50%, rgba(0,0,0,0.2) 100%)`;
-          shadowElement.style.position = `absolute`;
-          shadowElement.style.top = `0`;
-          shadowElement.style.width = `16px`;
-          shadowElement.style.zIndex = `99999`;
-          shadowElement.style.left = `-16px`;
-          shadowElement.style.bottom = `0`;
+          self.createWrapperAndShadowElem();
 
           // Transitions for pages
           if(direction == 'forward') {
