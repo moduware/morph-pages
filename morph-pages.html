@@ -202,7 +202,7 @@
         // change shadow opacity from 0 to 1
         let opacity = progress / props.duration;
         shadowElement.style.opacity = opacity;
-        // TODO: change overlay opacity from 0 to 1
+        // change overlay opacity from 0 to 1
         overlay.style.opacity = opacity;
 
         const currentPageOffset = this.easeInOutQuad(timing) * props.pageOffsetLeftMax;
@@ -236,7 +236,7 @@
         // change shadow opacity from 1 to 0
         let opacity = 1 - progress / props.duration;
         shadowElement.style.opacity = opacity;
-        // TODO: change overlay opacity from 1 to 0
+        // change overlay opacity from 1 to 0
         overlay.style.opacity = opacity;
 
         const currentPageOffset = this.easeInOutQuad(timing) * props.pageOffsetRightMax;
