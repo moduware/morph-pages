@@ -1,5 +1,6 @@
 function androidAnimation(self, currentPageIndex, nextPageIndex, direction) {
   return new Promise((resolve, reject) => {
+    self.animationInProgress = true;
 
     let props = {
       duration: 250,
@@ -21,6 +22,7 @@ function androidAnimation(self, currentPageIndex, nextPageIndex, direction) {
     window.requestAnimationFrame((timestamp) => {
       window[direction + 'AndroidAnimationStep'](props, () => {
         self.animationEnd(props);
+        self.animationInProgress = false;
         resolve();
       }, timestamp);
     });

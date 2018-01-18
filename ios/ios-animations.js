@@ -17,41 +17,9 @@ function iosAnimation(self, currentPageIndex, nextPageIndex, direction) {
     // TODO: refactor this if/else statement into its own function to make iosAnimation more readable and less lines
     // Transitions for pages
     if(direction == 'forward') {
-      // create shadow element in next page, with opacity 0
-      props.shadowElement.style.opacity = 0;
-      // props.nextPage.insertAdjacentElement('afterend', wrapper);
-      props.nextPage.insertAdjacentElement('afterbegin', props.shadowElement);
-      
-      // create overlay element for current page
-      props.overlayElement.style.opacity = 0;
-      props.overlayElement.style.transform = `translate3d(100%,0,0)`;
-      props.currentPage.insertAdjacentElement('afterbegin', props.overlayElement);
-      
-      // Current page behind next page
-      props.currentPage.style.zIndex = 1;
-      props.nextPage.style.zIndex = 2;
-      
-      props.currentPage.style.transform = `translate3d(0,0,0)`;
-      props.overlayElement.style.transform = `translate3d(0,0,0)`;
-      props.nextPage.style.transform = `translate3d(${props.nextPageOffset}%,0,0)`;
-      
+      setIosForwardAnimationInitialState(props);
     } else if(direction == 'backward') {
-      // create shadow element in current page, with opacity 1
-      props.shadowElement.style.opacity = 1;
-      // props.currentPage.insertAdjacentElement('afterend', wrapper);
-      props.currentPage.insertAdjacentElement('afterbegin', props.shadowElement);
-      
-      // create overlay element for next page with opacity 1
-      props.overlayElement.style.opacity = 1;
-      props.nextPage.insertAdjacentElement('afterbegin', props.overlayElement);
-
-      // Next page behind current page
-      props.nextPage.style.zIndex = 1;
-      props.currentPage.style.zIndex = 2;
-      
-      props.currentPage.style.transform = `translate3d(0,0,0)`;
-      props.nextPage.style.transform = `translate3d(${props.pageOffsetLeftMax}%,0,0)`;
-      
+      setIosBackwardAnimationInitialState(props);
     }
     
     requestAnimationId = window.requestAnimationFrame((timestamp) => {
@@ -67,6 +35,44 @@ function iosAnimation(self, currentPageIndex, nextPageIndex, direction) {
       }, timestamp);
     });
   });
+}
+
+function setIosForwardAnimationInitialState(props) {
+  // create shadow element in next page, with opacity 0
+  props.shadowElement.style.opacity = 0;
+  // props.nextPage.insertAdjacentElement('afterend', wrapper);
+  props.nextPage.insertAdjacentElement('afterbegin', props.shadowElement);
+  
+  // create overlay element for current page
+  props.overlayElement.style.opacity = 0;
+  props.overlayElement.style.transform = `translate3d(100%,0,0)`;
+  props.currentPage.insertAdjacentElement('afterbegin', props.overlayElement);
+  
+  // Current page behind next page
+  props.currentPage.style.zIndex = 1;
+  props.nextPage.style.zIndex = 2;
+  
+  props.currentPage.style.transform = `translate3d(0,0,0)`;
+  props.overlayElement.style.transform = `translate3d(0,0,0)`;
+  props.nextPage.style.transform = `translate3d(${props.nextPageOffset}%,0,0)`;
+}
+
+function setIosBackwardAnimationInitialState(props) {
+  // create shadow element in current page, with opacity 1
+  props.shadowElement.style.opacity = 1;
+  // props.currentPage.insertAdjacentElement('afterend', wrapper);
+  props.currentPage.insertAdjacentElement('afterbegin', props.shadowElement);
+  
+  // create overlay element for next page with opacity 1
+  props.overlayElement.style.opacity = 1;
+  props.nextPage.insertAdjacentElement('afterbegin', props.overlayElement);
+
+  // Next page behind current page
+  props.nextPage.style.zIndex = 1;
+  props.currentPage.style.zIndex = 2;
+  
+  props.currentPage.style.transform = `translate3d(0,0,0)`;
+  props.nextPage.style.transform = `translate3d(${props.pageOffsetLeftMax}%,0,0)`;
 }
 
 function createShadowElem() {
