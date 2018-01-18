@@ -120,7 +120,6 @@
       * This method to select previous page with animation
       */
       selectNext() {
-        //const next = (Number(this.selected) + 1) % this.items.length;
         const next = ++this.userSelected % this.items.length;
         this.goToPage(next);
       }
@@ -129,11 +128,10 @@
       * This method to select next page with animation
       */
       selectPrevious() {
-        //const previous = (this.selected == '0') ? Number(this.items.length) - 1 : Number(this.selected) - 1;
         this.userSelected--;
         if(this.userSelected < 0) this.userSelected = this.items.length - 1;
         const prev = this.userSelected;
-        this.returnToPage(previous)
+        this.returnToPage(prev)
       }
 
     }
