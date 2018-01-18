@@ -74,6 +74,7 @@
         } else if(this.platform == 'ios') {
           animation = this.iosAnimation(this.selected, index, direction);
         }
+        // FIXME: when cicking again ( changePage() ) before animation ends: Fix that this.selected changes to index
         animation.then(() => this.selected = index);
       }
 
