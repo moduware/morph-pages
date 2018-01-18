@@ -58,6 +58,25 @@
         };
       }
 
+      /**
+       * This will return our template inherited from superclass <iron-pages> with our styles inserted
+       */
+      static get template() {
+        if (!subTemplate) {
+          // first clone our superclass <iron-pages> template
+          let superClass = customElements.get('iron-pages');
+          subTemplate = superClass.template.cloneNode(true);
+          // here we will get the content of our <style> so we can insert them into the superclass <style>
+          // note the added id="styles" in our template tag above
+          const subStyle = Polymer.DomModule.import('morph-pages', 'template#styles').content;
+          // get the content of current style from superClass
+          const superStyle = subTemplate.content.querySelector('style');
+          // append our added style at the bottom of the current style to get higher priority
+          superStyle.parentNode.appendChild(subStyle);
+        }
+        return subTemplate;
+      }
+
       animationObserver(state) {
         if(state == true) {
           console.log('Animation started');
@@ -115,25 +134,6 @@
         if(this.userSelected < 0) this.userSelected = this.items.length - 1;
         const prev = this.userSelected;
         this.returnToPage(previous)
-      }
-
-      /**
-       * This will return our template inherited from superclass <iron-pages> with our styles inserted
-       */
-      static get template() {
-        if (!subTemplate) {
-          // first clone our superclass <iron-pages> template
-          let superClass = customElements.get('iron-pages');
-          subTemplate = superClass.template.cloneNode(true);
-          // here we will get the content of our <style> so we can insert them into the superclass <style>
-          // note the added id="styles" in our template tag above
-          const subStyle = Polymer.DomModule.import('morph-pages', 'template#styles').content;
-          // get the content of current style from superClass
-          const superStyle = subTemplate.content.querySelector('style');
-          // append our added style at the bottom of the current style to get higher priority
-          superStyle.parentNode.appendChild(subStyle);
-        }
-        return subTemplate;
       }
 
     }
