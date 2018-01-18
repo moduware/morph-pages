@@ -32,7 +32,7 @@
   <script>
     let subTemplate;
     let animationTimeout = null;
-    let shadowElement, wrapper = null;
+    let shadowElement, wrapper, overlay = null;
     let requestAnimationId;
     const IronPagesSuperClass = customElements.get('iron-pages');
 
@@ -88,6 +88,8 @@
           
           // function creation of wrapper and shadowElement
           self.createWrapperAndShadowElem();
+          // create overlay element for previous or next page
+          self.createOverlayElement();
           
           // TODO: refactor this if/else statement into its own function to make iosAnimation more readable and less lines
           // Transitions for pages
@@ -97,20 +99,29 @@
             props.nextPage.insertAdjacentElement('afterend', wrapper);
             wrapper.insertAdjacentElement('afterbegin', shadowElement);
             
+            // create overlay element for current page
+            overlay.style.opacity = 0;
+            overlay.style.transform = `translate3d(100%,0,0)`;
+            props.currentPage.insertAdjacentElement('afterbegin', overlay);
+            
             // Current page behind next page
             props.currentPage.style.zIndex = 1;
             props.nextPage.style.zIndex = 2;
             
             props.currentPage.style.transform = `translate3d(0,0,0)`;
+            overlay.style.transform = `translate3d(0,0,0)`;
             props.nextPage.style.transform = `translate3d(${props.nextPageOffset}%,0,0)`;
             
-            // TODO: create overlay element in current page, with opacity 0
           } else if(direction == 'backward') {
             // create shadow element in current page, with opacity 1
-            shadowElement.style.opacity = 1; 
+            shadowElement.style.opacity = 1;
             props.currentPage.insertAdjacentElement('afterend', wrapper);
             wrapper.insertAdjacentElement('afterbegin', shadowElement);
             
+            // create overlay element for next page with opacity 1
+            overlay.style.opacity = 1;
+            props.nextPage.insertAdjacentElement('afterbegin', overlay);
+
             // Next page behind current page
             props.nextPage.style.zIndex = 1;
             props.currentPage.style.zIndex = 2;
@@ -118,16 +129,17 @@
             props.currentPage.style.transform = `translate3d(0,0,0)`;
             props.nextPage.style.transform = `translate3d(${props.pageOffsetLeftMax}%,0,0)`;
             
-            // TODO: create overlay element in next page, with opacity 0
           }
           
           requestAnimationId = window.requestAnimationFrame((timestamp) => {
             self[direction + 'IosAnimationStep'](props, () => {
               androidAnimationEnd(props);
-              // FIXME: remove shadow element from current or next page AND everything click forward or backward
+              // remove shadow element from current or next page AND everything click forward or backward
               wrapper.parentNode.removeChild(wrapper);
               wrapper = null;
-              // TODO: remove overlay element from current or next page
+              // remove overlay element from current or next page
+              overlay.parentNode.removeChild(overlay);
+              overlay = null;
               resolve();
             }, timestamp);
           });
@@ -171,15 +183,27 @@
         shadowElement.style.bottom = `0`;
       }
 
+      createOverlayElement() {
+        overlay = document.createElement('div');
+        overlay.style.width = `100%`;
+        overlay.style.zIndex = 1000;
+        overlay.style.background = `rgba(0,0,0,0.1)`;
+        overlay.style.position = `absolute`;
+        overlay.style.top = `0`;
+        overlay.style.bottom = `0`;
+      }
+
       forwardIosAnimationStep(props, endCallback, timestamp) {
         if (props.start == -1) props.start = timestamp;
         const progress = timestamp - props.start;
         let timing = progress/props.duration;
         if(timing > 1) timing = 1;
 
-        // TODO: change shadow opacity from 0 to 1
+        // change shadow opacity from 0 to 1
         let opacity = progress / props.duration;
         shadowElement.style.opacity = opacity;
+        // TODO: change overlay opacity from 0 to 1
+        overlay.style.opacity = opacity;
 
         const currentPageOffset = this.easeInOutQuad(timing) * props.pageOffsetLeftMax;
         const nextPageOffset = 100 - this.easeInOutQuad(timing) * props.pageOffsetRightMax;
@@ -188,8 +212,6 @@
         props.nextPage.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
         // add shadow container transform
         wrapper.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
-
-        // TODO: change overlay opacity from 0 to 1
 
         if(progress < props.duration) {
           requestAnimationId = window.requestAnimationFrame((timestamp) => this.forwardIosAnimationStep(props, endCallback, timestamp));
@@ -211,9 +233,11 @@
         let timing = progress/props.duration;
         if(timing > 1) timing = 1;
 
-        // TODO: change shadow opacity from 1 to 0
+        // change shadow opacity from 1 to 0
         let opacity = 1 - progress / props.duration;
         shadowElement.style.opacity = opacity;
+        // TODO: change overlay opacity from 1 to 0
+        overlay.style.opacity = opacity;
 
         const currentPageOffset = this.easeInOutQuad(timing) * props.pageOffsetRightMax;
         const nextPageOffset = props.pageOffsetLeftMax - this.easeInOutQuad(timing) * props.pageOffsetLeftMax;
@@ -223,8 +247,6 @@
         props.currentPage.style.transform = `translate3d(${currentPageOffset}%,0,0)`;
         props.nextPage.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
 
-        // TODO: change shadow opacity from 1 to 0
-        // TODO: change overlay opacity from 1 to 0
 
         if(progress < props.duration) {
           requestAnimationId = window.requestAnimationFrame((timestamp) => this.backwardIosAnimationStep(props, endCallback, timestamp));
