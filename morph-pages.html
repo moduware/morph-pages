@@ -77,6 +77,64 @@
         animation.then(() => this.selected = index);
       }
 
+      iosAnimation(currentPageIndex, nextPageIndex, direction) {
+        return new Promise((resolve, reject) => {
+          let self = this;
+          let props;
+          
+          this.cancelAnimationAndRemoveElem(wrapper, nextPageIndex);
+          
+          props = this.iosAnimationProps(props, currentPageIndex, nextPageIndex);
+          
+          // FIXME: refactor this to maybe a function and move the whole creation of wrapper and shadowElement
+          self.createWrapperAndShadowElem();
+          
+          // TODO: refactor this if/else statement into its own function to make iosAnimation more readable and less lines
+          // Transitions for pages
+          if(direction == 'forward') {
+            shadowElement.style.opacity = 0;
+            props.nextPage.insertAdjacentElement('afterend', wrapper);
+            wrapper.insertAdjacentElement('afterbegin', shadowElement);
+            
+            // Current page behind next page
+            props.currentPage.style.zIndex = 1;
+            props.nextPage.style.zIndex = 2;
+            
+            props.currentPage.style.transform = `translate3d(0,0,0)`;
+            props.nextPage.style.transform = `translate3d(${props.nextPageOffset}%,0,0)`;
+            
+            // TODO: create shadow element in next page, with opacity 0
+            // TODO: create overlay element in current page, with opacity 0
+          } else if(direction == 'backward') {
+            // FIXME: this opacity should be reverse direction if backwards
+            shadowElement.style.opacity = 1; 
+            props.currentPage.insertAdjacentElement('afterend', wrapper);
+            wrapper.insertAdjacentElement('afterbegin', shadowElement);
+            
+            // Next page behind current page
+            props.nextPage.style.zIndex = 1;
+            props.currentPage.style.zIndex = 2;
+            
+            props.currentPage.style.transform = `translate3d(0,0,0)`;
+            props.nextPage.style.transform = `translate3d(${props.pageOffsetLeftMax}%,0,0)`;
+            
+            // TODO: create shadow element in current page, with opacity 0
+            // TODO: create overlay element in next page, with opacity 0
+          }
+          
+          requestAnimationId = window.requestAnimationFrame((timestamp) => {
+            self[direction + 'IosAnimationStep'](props, () => {
+              androidAnimationEnd(props);
+              // FIXME: remove shadow element from current or next page AND everything click forward or backward
+              wrapper.parentNode.removeChild(wrapper);
+              wrapper = null;
+              // TODO: remove overlay element from current or next page
+              resolve();
+            }, timestamp);
+          });
+        });
+      }
+
       cancelAnimationAndRemoveElem(wrapper, nextPageIndex) {
         if (wrapper) {
           wrapper.parentNode.removeChild(wrapper);
@@ -84,9 +142,7 @@
           // this.selected = nextPageIndex;
         }
       }
-
-      easeInOutQuad(t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t }
-
+      
       iosAnimationProps(props, currentPageIndex, nextPageIndex) {
         props = {
           duration: 400,
@@ -116,63 +172,6 @@
         shadowElement.style.bottom = `0`;
       }
 
-      iosAnimation(currentPageIndex, nextPageIndex, direction) {
-        return new Promise((resolve, reject) => {
-          let self = this;
-          let props;
-
-          this.cancelAnimationAndRemoveElem(wrapper, nextPageIndex);
-
-          props = this.iosAnimationProps(props, currentPageIndex, nextPageIndex);
-
-          // FIXME: refactor this to maybe a function and move the whole creation of wrapper and shadowElement
-          self.createWrapperAndShadowElem();
-
-          // Transitions for pages
-          if(direction == 'forward') {
-            shadowElement.style.opacity = 0;
-            props.nextPage.insertAdjacentElement('afterend', wrapper);
-            wrapper.insertAdjacentElement('afterbegin', shadowElement);
-
-            // Current page behind next page
-            props.currentPage.style.zIndex = 1;
-            props.nextPage.style.zIndex = 2;
-
-            props.currentPage.style.transform = `translate3d(0,0,0)`;
-            props.nextPage.style.transform = `translate3d(${props.nextPageOffset}%,0,0)`;
-            
-            // TODO: create shadow element in next page, with opacity 0
-            // TODO: create overlay element in current page, with opacity 0
-          } else if(direction == 'backward') {
-            // FIXME: this opacity should be reverse direction if backwards
-            shadowElement.style.opacity = 1; 
-            props.currentPage.insertAdjacentElement('afterend', wrapper);
-            wrapper.insertAdjacentElement('afterbegin', shadowElement);
-
-            // Next page behind current page
-            props.nextPage.style.zIndex = 1;
-            props.currentPage.style.zIndex = 2;
-            
-            props.currentPage.style.transform = `translate3d(0,0,0)`;
-            props.nextPage.style.transform = `translate3d(${props.pageOffsetLeftMax}%,0,0)`;
-            
-            // TODO: create shadow element in current page, with opacity 0
-            // TODO: create overlay element in next page, with opacity 0
-          }
-
-          requestAnimationId = window.requestAnimationFrame((timestamp) => {
-            self[direction + 'IosAnimationStep'](props, () => {
-              androidAnimationEnd(props);
-              // FIXME: remove shadow element from current or next page AND everything click forward or backward
-              wrapper.parentNode.removeChild(wrapper);
-              wrapper = null;
-              // TODO: remove overlay element from current or next page
-              resolve();
-            }, timestamp);
-          });
-        });
-      }
-
       forwardIosAnimationStep(props, endCallback, timestamp) {
         if (props.start == -1) props.start = timestamp;
         const progress = timestamp - props.start;
@@ -198,6 +197,13 @@
         } else {
           endCallback(props);
         }
+      }
+
+      /**
+       *  animation math used by forwardIosAnimationStep and backwardIosAnimationStep
+       */
+      easeInOutQuad(t) {
+        return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t
       }
 
       backwardIosAnimationStep(props, endCallback, timestamp) {
