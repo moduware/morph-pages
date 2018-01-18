@@ -86,12 +86,13 @@
           
           props = this.iosAnimationProps(props, currentPageIndex, nextPageIndex);
           
-          // FIXME: refactor this to maybe a function and move the whole creation of wrapper and shadowElement
+          // function creation of wrapper and shadowElement
           self.createWrapperAndShadowElem();
           
           // TODO: refactor this if/else statement into its own function to make iosAnimation more readable and less lines
           // Transitions for pages
           if(direction == 'forward') {
+            // create shadow element in next page, with opacity 0
             shadowElement.style.opacity = 0;
             props.nextPage.insertAdjacentElement('afterend', wrapper);
             wrapper.insertAdjacentElement('afterbegin', shadowElement);
@@ -103,10 +104,9 @@
             props.currentPage.style.transform = `translate3d(0,0,0)`;
             props.nextPage.style.transform = `translate3d(${props.nextPageOffset}%,0,0)`;
             
-            // TODO: create shadow element in next page, with opacity 0
             // TODO: create overlay element in current page, with opacity 0
           } else if(direction == 'backward') {
-            // FIXME: this opacity should be reverse direction if backwards
+            // create shadow element in current page, with opacity 1
             shadowElement.style.opacity = 1; 
             props.currentPage.insertAdjacentElement('afterend', wrapper);
             wrapper.insertAdjacentElement('afterbegin', shadowElement);
@@ -118,7 +118,6 @@
             props.currentPage.style.transform = `translate3d(0,0,0)`;
             props.nextPage.style.transform = `translate3d(${props.pageOffsetLeftMax}%,0,0)`;
             
-            // TODO: create shadow element in current page, with opacity 0
             // TODO: create overlay element in next page, with opacity 0
           }
           
