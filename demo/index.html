@@ -28,7 +28,6 @@
 
         .page {
           width: 100%;
-          color: red;
         }
 
         .header-container {
@@ -41,6 +40,7 @@
 
         .background-white {
           background-color: white;
+          color: red;
         }
 
         .background-red {
@@ -49,6 +49,7 @@
         
         .background-green {
           background-color: green;
+          color: white;
         }
 
         .background-blue {
@@ -60,13 +61,17 @@
         }
 
         .background-yellow {
-          background-color: purple;
+          background-color: yellow;
         }
 
         morph-pages {
           position: absolute;
           top: 0; left: 0; right: 0; bottom: 0;
           display: flex;
+        }
+
+        h1 {
+          text-align: center;
         }
       </style>
     </custom-style>
@@ -82,12 +87,13 @@
             <paper-icon-button icon="arrow-forward" onclick="nextPage()"></paper-icon-button>
           </app-toolbar>
           <div class="container">
-            <morph-pages selected="0" platform="android">
-              <div class="page background-white">One</div>
-              <div class="page background-white">Two</div>
-              <div class="page background-white">Three</div>
-              <div class="page background-white">Four</div>
-              <div class="page background-white">Five</div>
+            <morph-pages selected="0" platform="ios">
+              <div class="page background-green"><h1>One</h1></div>
+              <div class="page background-white"><h1>Two</h1></div>
+              <div class="page background-green"><h1>Three</h1></div>
+              <div class="page background-white"><h1>Four</h1></div>
+              <div class="page background-green"><h1>Five</h1></div>
+              <div class="page background-white"><h1>Six</h1></div>
             </morph-pages>
           </div>
 
