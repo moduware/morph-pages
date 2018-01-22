@@ -163,9 +163,14 @@
         this.returnToPage(prev);
       }
 
-      // TODO: _onTrack - uses trackStart, trackMove and trackEnd
+      // Listener callback handleTrack() detects track and uses trackStart, trackMove and trackEnd to manage swiping
       _onTrack(event) {
         var track = event.detail;
+        // this are checks if touch tracking needs to be cancelled
+        if (track.dx < 0) {
+          return;
+        }
+        
         // this is checking for track.state == equal and swipe is left to right
         if (track.state === 'start' && Math.abs(track.dy) < Math.abs(track.dx)) {
           this._trackStart(track);
@@ -178,12 +183,14 @@
         }
       }
 
-      // TODO: _trackStart -  
+      // tracking is triggered by this method 
       _trackStart(trackData) {
         console.log('I am trackStart!');
         //TODO: if transition is running call _resetPages()
-        // TODO: this._setUpSwipePages()
+
+        // set up the pages to animate
         this._setUpSwipePages();
+
         // TODO: this._animatePages(trackData.dx)
         this._animatePages(trackData.dx);
 
@@ -242,9 +249,6 @@
         var leftIndex = (Number(this.indexOf(this.selectedItem)) - 1 + this.items.length) % this.items.length;
         this._leftCandidate = this.items[leftIndex];
         this._initPage(this._leftCandidate, 'none', -this._getOffsetWidth());
-        console.log('_setUpSwipePages', (Number(this.indexOf(this.selectedItem)) - 1 + this.items.length) % this.items.length );
-        console.log('this._leftCandidate', this._leftCandidate.offsetWidth);
-        
       }
 
       // TODO: initPage - set up page for animatioin
