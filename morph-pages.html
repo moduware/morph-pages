@@ -270,7 +270,13 @@
         var index = this.indexOf(event.detail.item);
         console.log('index', index);
         
-
+        if (this._completeSwipe) {
+          this._completeSwipe = false;
+          // TODO: THIS IS A GOOD PLACE TO RESET PAGES
+          // this._resetPage(page);
+        } else {
+          // do something
+        }
       }
 
       // TODO: setUpSwipePage - this should change the selection of the last item on history
@@ -327,6 +333,16 @@
       // _preventTouchMove(e) {
       //   return e && e.preventDefault();
       // }
+
+      // TODO: where to put this reset page???
+      _resetPage(page) {
+        page.style.left = "0px";
+        page.style.webkitTransition = 'none';
+        page.style.transition = 'none';
+        this.toggleClass('iron-swiping', false, page);
+
+        this._animatedPages.pop();
+      }
 
     }
 
