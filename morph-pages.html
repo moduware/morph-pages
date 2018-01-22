@@ -111,6 +111,9 @@
         super();
         this._animatedPages = [];
         Polymer.Gestures.addListener(this, 'track', e => this.handleTrack(e));
+
+        // TODO: add 'iron-select' listener _onIronSelectItem or use selected-item-changed
+        this.addEventListener('iron-select', this._onIronSelectItem);
       }
 
       animationObserver(state) {
@@ -197,13 +200,13 @@
        *  Detects track.state = start. tracking is triggered by this method
        */
       _trackStart(trackData) {
-        console.log('I am trackStart!');
+
         //TODO: if transition is running call _resetPages()
 
         // set up the pages to animate
         this._setUpSwipePages();
 
-        // TODO: this._animatePages(trackData.dx)
+        // TODO: add js docs
         this._animatePages(trackData.dx);
 
         //TODO: this._switchPageIfNecessary(trackData.dx) ??? This is the case when there is only two pages
@@ -216,7 +219,6 @@
        *  Gets all data event.details as long as track.state = 'track'. 
        */
       _trackMove(trackData) {
-        console.log('trackMove');
         //TODO: this._animatedPages(trackData.dx) send data for animation progression
         this._animatePages(trackData.dx);
       }
@@ -256,8 +258,22 @@
       // TODO: deselectItem
 
       // TODO: onIronSelectItem
+      _onIronSelectItem(event) {
+        // TODO: remove this log
+        console.log('_onIronSelectItem');
 
-      // TODO: setUpSwipePage - this is the selection of the last item on history
+        // prevent bubbling of same event to child. 
+        if (event.target !== this) {
+          return;
+        }
+
+        var index = this.indexOf(event.detail.item);
+        console.log('index', index);
+        
+
+      }
+
+      // TODO: setUpSwipePage - this should change the selection of the last item on history
       _setUpSwipePages() {
         // reset the animated page list
         this._animatedPages = [];
@@ -283,7 +299,6 @@
 
       // animatePages - animate all pages
       _animatePages(x) {
-        console.log('this._animatedPages trackData.dx', x);
         for (var i = 0; i < this._animatedPages.length; i++) {
           this.translate3d(x+'px', '0px', '0px', this._animatedPages[i]);
         }
