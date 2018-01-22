@@ -64,7 +64,16 @@
           threshold: {
             type: Number,
             value: 0.3
+          },
+
+          /**
+           * The CSS transition timing function applied.
+           */
+          transitionTimingFunction: {
+            type: String,
+            value: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
           }
+
         };
       }
 
@@ -93,6 +102,7 @@
 
       constructor() {
         super();
+        this._animatedPages = [];
         Polymer.Gestures.addListener(this, 'track', e => this.handleTrack(e));
       }
 
@@ -158,8 +168,10 @@
         var track = event.detail;
         // this is checking for track.state == equal and swipe is left to right
         if (track.state === 'start' && Math.abs(track.dy) < Math.abs(track.dx)) {
-          console.log('track', track.state);
+          console.log('track');
           this._trackStart(track);
+
+          this._swipeStarted = true;
         } else if (track.state == 'track') {
           this._trackMove(track);
         } else if (track.state == 'end') {
@@ -169,10 +181,13 @@
 
       // TODO: _trackStart -  
       _trackStart(trackData) {
-        console.log('I am trackStart!', trackData);
+        console.log('I am trackStart!');
         //TODO: if transition is running call _resetPages()
-        //TODO: this._setUpSwipePages()
-        //TODO: this._animatePages(trackData.dx)
+        // TODO: this._setUpSwipePages()
+        this._setUpSwipePages();
+        // TODO: this._animatePages(trackData.dx)
+        this._animatePages(trackData.dx);
+
         //TODO: this._switchPageIfNecessary(trackData.dx) ???
         // Prevent regular touchmove event (disables vertical scroll)
         //TODO: window.addEventListener('touchmove', this._preventTouchMove);
@@ -180,15 +195,33 @@
 
       // TODO: trackMove - tracking movement value
       _trackMove(trackData) {
-        console.log('trackMove', trackData);
-        //TODO: this.animatedPages(trackData.dx) send data for animation progression
+        console.log('trackMove');
+        //TODO: this._animatedPages(trackData.dx) send data for animation progression
+        this._animatePages(trackData.dx);
       }
 
       // TODO: trackEnd 
       _trackEnd(trackData) {
+        if (this._swipeStarted == false) {
+          return;
+        }
         //TODO: activate transtion
+        for (var i = 0; i < this._animatedPages.length; i++) {
+          this._animatedPages[i].style.transition = this._computeTransition(1);
+        }
+        // The element is swipe away when swiping get passed the threshold
         this._completeSwipe = Math.abs(trackData.dx) > this._getOffsetWidth() * this.threshold;
-        console.log('this._completeSwipe', this._completeSwipe);
+        if (this._completeSwipe) {
+          // update selected
+          this._selectPage(this._leftCandidate);
+          // trigger the animation in the right direction
+          this._animatePages(this._getOffsetWidth() );
+        } else {
+          this._animatePages(0);
+        }
+
+        // enable regular touchmove event ( enables vertical scroll again)
+        // window.removeEventListener('touchmove', this._preventTouchMove);
       }
 
       _getOffsetWidth() {
@@ -197,14 +230,63 @@
       }
 
       // TODO: deselectItem
+
       // TODO: onIronSelectItem
+
       // TODO: setUpSwipePage - this is the selection of the last item on history
-        // TODO: initPage - set up page for animatioin
+      _setUpSwipePages() {
+        // reset the animated page list
+        this._animatedPages = [];
+        // selected page
+        this._initPage(this.selectedItem, 'none', 0);
+        // previous page. for now its the left page. in future it will be history based or previous location based
+        var leftIndex = (Number(this.indexOf(this.selectedItem)) - 1 + this.items.length) % this.items.length;
+        this._leftCandidate = this.items[leftIndex];
+        this._initPage(this._leftCandidate, 'none', -this._getOffsetWidth());
+        console.log('_setUpSwipePages', (Number(this.indexOf(this.selectedItem)) - 1 + this.items.length) % this.items.length );
+        console.log('this._leftCandidate', this._leftCandidate.offsetWidth);
+        
+      }
+
+      // TODO: initPage - set up page for animatioin
+      _initPage(page, transition, left) {
+        if (page == null) {
+          console.log('page is null inside _initPage');
+          
+          return;
+        }
+        page.style.left = `${left}px`;
+        page.style.transition = transition;
+        this.toggleClass('iron-swiping', true, page); // this should be added in css styles - left: -100% !important;
+
+        this._animatedPages.push(page);
+        console.log('initPage... this._animatedPages = ', this._animatedPages);
+        
+      }
+
       // TODO: animatePages - animate all pages
+      _animatePages(x) {
+        console.log('this._animatedPages trackData.dx', x);
+        for (var i = 0; i < this._animatedPages.length; i++) {
+          this.translate3d(x+'px', '0px', '0px', this._animatedPages[i]);
+        }
+        
+      }
+
       // TODO: selectPage - this.selected = this.indexToValue();
+      _selectPage(page) {
+        var index = this.indexOf(page);
+        this.selected = this._indexToValue(index);
+      }
+
       // TODO: resetPage - reset page styles left and trancsition and remove from animatedPages animatedPages.pop();
       // TODO: resetPages - 
-      // TODO: computeTransition - where transition is computed
+      // TODO: _computeTransition - where transition is computed
+      _computeTransition(factor) {
+        var duration = factor * 400;
+        return `transform ${duration}ms ${this.transitionTimingFunction}`;
+      }
+
       // TODO: _getOffsetWidth - 
     }
 
