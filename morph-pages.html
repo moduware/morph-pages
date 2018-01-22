@@ -26,6 +26,10 @@
       :host > ::slotted(:not(slot).iron-selected) {
         z-index: 1;
       }
+
+      :host > ::content > :not(.iron-selected):not(.iron-swiping) {
+        left: -100% !important;
+      }
     </style>
 
   </template>
@@ -63,7 +67,7 @@
           */
           threshold: {
             type: Number,
-            value: 0.3
+            value: 0.4
           },
 
           /**
@@ -251,11 +255,9 @@
         this._initPage(this._leftCandidate, 'none', -this._getOffsetWidth());
       }
 
-      // TODO: initPage - set up page for animatioin
+      // initPage - set up page for animatioin
       _initPage(page, transition, left) {
         if (page == null) {
-          console.log('page is null inside _initPage');
-          
           return;
         }
         page.style.left = `${left}px`;
@@ -263,11 +265,9 @@
         this.toggleClass('iron-swiping', true, page); // this should be added in css styles - left: -100% !important;
 
         this._animatedPages.push(page);
-        console.log('initPage... this._animatedPages = ', this._animatedPages);
-        
       }
 
-      // TODO: animatePages - animate all pages
+      // animatePages - animate all pages
       _animatePages(x) {
         console.log('this._animatedPages trackData.dx', x);
         for (var i = 0; i < this._animatedPages.length; i++) {
@@ -276,21 +276,20 @@
         
       }
 
-      // TODO: selectPage - this.selected = this.indexToValue();
+      // selectPage - this.selected = this.indexToValue();
       _selectPage(page) {
         var index = this.indexOf(page);
         this.selected = this._indexToValue(index);
       }
 
       // TODO: resetPage - reset page styles left and trancsition and remove from animatedPages animatedPages.pop();
-      // TODO: resetPages - 
-      // TODO: _computeTransition - where transition is computed
+      // TODO: resetPages
+
+      // where transition is computed
       _computeTransition(factor) {
         var duration = factor * 400;
         return `transform ${duration}ms ${this.transitionTimingFunction}`;
       }
-
-      // TODO: _getOffsetWidth - 
     }
 
     window.customElements.define(MorphPages.is, MorphPages);
