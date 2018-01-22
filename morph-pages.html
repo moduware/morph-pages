@@ -168,13 +168,12 @@
         var track = event.detail;
         // this is checking for track.state == equal and swipe is left to right
         if (track.state === 'start' && Math.abs(track.dy) < Math.abs(track.dx)) {
-          console.log('track');
           this._trackStart(track);
 
           this._swipeStarted = true;
-        } else if (track.state == 'track') {
+        } else if (track.state == 'track' && this._swipeStarted) {
           this._trackMove(track);
-        } else if (track.state == 'end') {
+        } else if (track.state == 'end' && this._swipeStarted) {
           this._trackEnd(track);
         }
       }
