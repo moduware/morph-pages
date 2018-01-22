@@ -233,6 +233,7 @@
         
         for (var i = 0; i < this._animatedPages.length; i++) {
           this._animatedPages[i].style.transition = this._computeTransition(1);
+          this._animatedPages[i].addEventListener('transitionend', this._pageTransitionEndHandler);
         }
         // The element is swipe away when swiping get passed the threshold
         this._completeSwipe = Math.abs(trackData.dx) > this._getOffsetWidth() * this.threshold;
@@ -245,9 +246,14 @@
           // swipe not long enough so go back to current page
           this._animatePages(0);
         }
-
+        
         // enable regular touchmove event ( enables vertical scroll again)
         // window.removeEventListener('touchmove', this._preventTouchMove);
+      }
+
+      _pageTransitionEndHandler(event) {
+        this.removeAttribute('style');
+        this.classList.remove('iron-swiping');
       }
 
       _getOffsetWidth() {
@@ -288,6 +294,8 @@
         // previous page. for now its the left page. in future it will be history based or previous location based
         var leftIndex = (Number(this.indexOf(this.selectedItem)) - 1 + this.items.length) % this.items.length;
         this._leftCandidate = this.items[leftIndex];
+        this._leftCandidate.style.zIndex = 2;
+        this.selectedItem.style.zIndex = 3;
         this._initPage(this._leftCandidate, 'none', -this._getOffsetWidth());
       }
 
@@ -311,7 +319,7 @@
         
       }
 
-      // selectPage - this.selected = this.indexToValue();
+      // TODO: Add js docs
       _selectPage(page) {
         var index = this.indexOf(page);
         this.selected = this._indexToValue(index);
@@ -336,12 +344,8 @@
 
       // TODO: where to put this reset page???
       _resetPage(page) {
-        page.style.left = "0px";
-        page.style.webkitTransition = 'none';
-        page.style.transition = 'none';
-        this.toggleClass('iron-swiping', false, page);
-
-        this._animatedPages.pop();
+        page.removeAttribute('style');
+        page.classList.remove('iron-swiping');
       }
 
     }
