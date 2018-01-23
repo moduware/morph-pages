@@ -1,4 +1,4 @@
-function iosAnimation(self, currentPageIndex, nextPageIndex, direction) {
+function iosAnimation(self, currentPage, nextPage, direction) {
   return new Promise((resolve, reject) => {
     
     let props = {
@@ -7,9 +7,8 @@ function iosAnimation(self, currentPageIndex, nextPageIndex, direction) {
       pageOffsetRightMax: 100, // percent
       start: -1,
       morphPages: self,
-      currentPage: self.children[currentPageIndex],
-      nextPage: self.children[nextPageIndex],
-      nextPageIndex: nextPageIndex,
+      currentPage: currentPage,
+      nextPage: nextPage,
       shadowElement: createShadowElem(),
       overlayElement: createOverlayElement()
     };
