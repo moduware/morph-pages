@@ -308,7 +308,13 @@
         // previous page. for now its the left page. in future it will be history based or previous location based
         var leftIndex = (Number(this.indexOf(this.selectedItem)) - 1 + this.items.length) % this.items.length;
 
-        this._leftCandidate = this.items[leftIndex];
+        if(this.navigationHistory.length == 0) {
+          throw new DOMException('Not implemented');
+        }
+        var value = this.navigationHistory.pop();
+        var page = this._valueToItem(value);
+
+        this._leftCandidate = page;//this.items[leftIndex];
         this._leftCandidate.style.zIndex = 2;
         this.selectedItem.style.zIndex = 3;
         this._initPage(this._leftCandidate, 'none', -this._getOffsetWidth());
