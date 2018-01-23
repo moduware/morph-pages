@@ -76,6 +76,11 @@
           transitionTimingFunction: {
             type: String,
             value: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
+          },
+
+          navigationHistory: {
+            type: Array,
+            value: () => []
           }
 
         };
@@ -128,26 +133,29 @@
         super.connectedCallback();
       }
       
-      goToPage(index) {
+      goToPage(page) {
         const direction = 'forward';
-        this.changePage(index, direction);
+        // saving our current page to history
+        this.navigationHistory.push(this.selected);
+        console.log(this.navigationHistory);
+        this.changePage(page, direction);
       }
       
-      returnToPage(index) {
+      returnToPage(page) {
         const direction = 'backward'; 
-        this.changePage(index, direction);
+        this.changePage(page, direction);
       }
 
-      changePage(index, direction) {
+      changePage(page, direction) {
         let animation;
 
         if(this.platform == 'android') {
-          animation = androidAnimation(this, this.selected, index, direction);  
+          animation = androidAnimation(this, this._valueToItem(this.selected), page, direction);  
         } else if(this.platform == 'ios') {
-          animation = iosAnimation(this, this.selected, index, direction);
+          animation = iosAnimation(this, this._valueToItem(this.selected), page, direction);
         }
 
-        animation.then(() => this.selected = index);
+        animation.then(() => this._selectPage(page));
       }
 
       animationEnd(props) {
@@ -160,7 +168,9 @@
       */
       selectNext() {
         const next = ++this.userSelected % this.items.length;
-        this.goToPage(next);
+        const value = this._indexToValue(next);
+        const page = this._valueToItem(value);
+        this.goToPage(page);
       }
 
       /**
@@ -169,8 +179,10 @@
       selectPrevious() {
         this.userSelected--;
         if(this.userSelected < 0) this.userSelected = this.items.length - 1;
-        const prev = this.userSelected;
-        this.returnToPage(prev);
+        const prev = this.userSelected % this.items.length;
+        const value = this._indexToValue(prev);
+        const page = this._valueToItem(value);
+        this.returnToPage(page);
       }
 
       /**
@@ -291,8 +303,11 @@
         this._animatedPages = [];
         // selected page
         this._initPage(this.selectedItem, 'none', 0);
+
+        // TODO: determine which page to go
         // previous page. for now its the left page. in future it will be history based or previous location based
         var leftIndex = (Number(this.indexOf(this.selectedItem)) - 1 + this.items.length) % this.items.length;
+
         this._leftCandidate = this.items[leftIndex];
         this._leftCandidate.style.zIndex = 2;
         this.selectedItem.style.zIndex = 3;
@@ -321,8 +336,9 @@
 
       // TODO: Add js docs
       _selectPage(page) {
-        var index = this.indexOf(page);
-        this.selected = this._indexToValue(index);
+        //var index = this.indexOf(page);
+        //this.selected = this._indexToValue(index);
+        this.selected = this._valueForItem(page);
       }
 
       // TODO: resetPage - reset page styles left and trancsition and remove from animatedPages animatedPages.pop();

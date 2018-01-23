@@ -1,4 +1,4 @@
-function androidAnimation(self, currentPageIndex, nextPageIndex, direction) {
+function androidAnimation(self, currentPage, nextPage, direction) {
   return new Promise((resolve, reject) => {
     self.animationInProgress = true;
 
@@ -7,9 +7,9 @@ function androidAnimation(self, currentPageIndex, nextPageIndex, direction) {
       nextPageOffset: 56,
       start: -1,
       morphPages: self,
-      currentPage: self.children[currentPageIndex],
-      nextPage: self.children[nextPageIndex],
-      nextPageIndex: nextPageIndex
+      currentPage: currentPage,
+      nextPage: nextPage,
+      // nextPageIndex: self._valueForItem(nextPage)
     };
 
     // Current page behind next page

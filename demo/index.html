@@ -14,6 +14,7 @@
     <link rel="import" href="../../app-layout/app-header/app-header.html">
     <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
     <link rel="import" href="../../iron-icons/iron-icons.html">
+    <link rel="import" href="../../iron-location/iron-location.html">
     <link rel="import" href="../morph-pages.html">
 
     <custom-style>
@@ -80,42 +81,57 @@
     <div class="vertical-section-container centered">
       <h3>Basic morph-pages demo</h3>
       <demo-snippet>
-        <template>
-          <app-toolbar class="header-container">
-            <paper-icon-button icon="arrow-back" onclick="previousPage()"></paper-icon-button>
-            <div main-title>morph-pages</div>
-            <paper-icon-button icon="arrow-forward" onclick="nextPage()"></paper-icon-button>
-          </app-toolbar>
-          <div class="container">
-            <morph-pages selected="0" platform="ios">
-              <div class="page background-green"><h1>One</h1></div>
-              <div class="page background-white"><h1>Two</h1></div>
-              <div class="page background-green"><h1>Three</h1></div>
-              <div class="page background-white"><h1>Four</h1></div>
-              <div class="page background-green"><h1>Five</h1></div>
-              <div class="page background-white"><h1>Six</h1></div>
-            </morph-pages>
-          </div>
+        <dom-bind>
+          <template>
+            <app-toolbar class="header-container">
+              <paper-icon-button icon="arrow-back" onclick="previousPage()"></paper-icon-button>
+              <div main-title>morph-pages</div>
+              <paper-icon-button icon="arrow-forward" onclick="nextPage()"></paper-icon-button>
+            </app-toolbar>
+            <div class="links">
+              <a href="#one">One</a>
+              <a href="#two">Two</a>
+              <a href="#three">Three</a>
+              <a href="#four">Four</a>
+              <a href="#five">Five</a>
+              <a href="#six">Six</a>
+            </div>
+            <div class="container">
+              <iron-location hash="{{currentPage}}"></iron-location>
+              <morph-pages selected="{{currentPage}}" attr-for-selected="name" platform="android">
+                <div name="one" class="page background-green"><h1>One</h1></div>
+                <div name="two" class="page background-white"><h1>Two</h1></div>
+                <div name="three" class="page background-green"><h1>Three</h1></div>
+                <div name="four" class="page background-white"><h1>Four</h1></div>
+                <div name="five" class="page background-green"><h1>Five</h1></div>
+                <div name="six" class="page background-white"><h1>Six</h1></div>
+              </morph-pages>
+            </div>
 
-          <script>
-            /**
-            * move to previous page
-            */
-            previousPage = function() {
-              var pages = document.querySelector('morph-pages');
-              pages.selectPrevious();
-            };
+            <script>
+              /**
+              * move to previous page
+              */
+              previousPage = function() {
+                var pages = document.querySelector('morph-pages');
+                pages.selectPrevious();
+              };
 
-            /**
-            * move to next page
-            */ 
-            nextPage = function() {
-              var pages = document.querySelector('morph-pages');
-              pages.selectNext();
-            };
+              /**
+              * move to next page
+              */ 
+              nextPage = function() {
+                var pages = document.querySelector('morph-pages');
+                pages.selectNext();
+              };
 
-          </script>
-        </template>
+            </script>
+          </template>
+        </dom-bind>
+        <script>
+          var bind = document.querySelector('dom-bind');
+          bind.currentPage = 'one';
+        </script>
       </demo-snippet>
     </div>
   </body>
