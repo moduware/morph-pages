@@ -144,6 +144,9 @@
       
       returnToPage(page) {
         const direction = 'backward';
+        let lastPageNavigationHistory = this._valueToItem(this.navigationHistory[this.navigationHistory.length - 1]);
+
+        if (page == lastPageNavigationHistory) this.navigationHistory.pop(); // if last page in history is equal to current page then pop();
         this.changePage(page, direction);
       }
 
