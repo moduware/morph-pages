@@ -197,7 +197,7 @@
       _onTrack(event) {
         var track = event.detail;
         // this are checks if touch tracking needs to be cancelled
-        if (track.dx < 0) {
+        if (track.dx < 0 || this.platform != 'ios') {
           return;
         }
         
