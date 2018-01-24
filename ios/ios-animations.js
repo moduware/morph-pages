@@ -1,6 +1,7 @@
 function iosAnimation(self, currentPage, nextPage, direction) {
   return new Promise((resolve, reject) => {
-    
+    self.animationInProgress = true;
+
     let props = {
       duration: 400,
       pageOffsetLeftMax: -20, // percent
@@ -30,6 +31,7 @@ function iosAnimation(self, currentPage, nextPage, direction) {
         // remove overlay element from current or next page
         props.overlayElement.parentNode.removeChild(props.overlayElement);
         props.overlayElement = null;
+        self.animationInProgress = false;
         resolve();
       }, timestamp);
     });
