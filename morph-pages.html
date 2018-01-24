@@ -264,6 +264,8 @@
           // trigger the animation in the right direction
           this._animatePages(this._getOffsetWidth() );
           this._transitionRunning = false;
+          // update userSelected property so selectNext and selectPrevious works
+          this.userSelected--;
         } else {
           // swipe not long enough so go back to current page
           this._animatePages(0);
@@ -344,7 +346,7 @@
         if (page == null) {
           return;
         }
-        page.style.left = `${left}px`;
+        page.style.left = `${left * 0.2}px`;
         page.style.transition = transition;
         this.toggleClass('iron-swiping', true, page); // this should be added in css styles - left: -100% !important;
 
@@ -353,9 +355,12 @@
 
       // animatePages - animate all pages
       _animatePages(x) {
-        for (var i = 0; i < this._animatedPages.length; i++) {
-          this.translate3d(x+'px', '0px', '0px', this._animatedPages[i]);
-        }
+        this.translate3d(x + 'px', '0px', '0px', this._animatedPages[0]);
+        this.translate3d(`${x * 0.2}` + 'px', '0px', '0px', this._animatedPages[1]);
+
+        // for (var i = 0; i < this._animatedPages.length; i++) {
+        //   this.translate3d(x+'px', '0px', '0px', this._animatedPages[i]);
+        // }
         
       }
 
