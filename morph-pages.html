@@ -114,7 +114,8 @@
 
       constructor() {
         super();
-        this._animatedPages = [];
+        this._currentPageElement = null;
+        this._previousPageElement = null;
         Polymer.Gestures.addListener(this, 'track', e => this.handleTrack(e));
 
         // TODO: add 'iron-select' listener _onIronSelectItem or use selected-item-changed
@@ -213,10 +214,6 @@
        *  Detects track.state = start. tracking is triggered by this method
        */
       _trackStart(trackData) {
-
-        //TODO: if transition is running call _resetPages()
-
-        // cancel tracking if navigationHistory.length == 0
         if (this.navigationHistory.length == 0) {
           this._swipeStarted = false;
           return;
@@ -238,7 +235,7 @@
        *  Gets all data event.details as long as track.state = 'track'. 
        */
       _trackMove(trackData) {
-        //TODO: this._animatedPages(trackData.dx) send data for animation progression
+        //TODO: send data for animation progression
         this._animatePages(trackData.dx);
       }
 
@@ -250,10 +247,11 @@
           return;
         }
         
-        for (var i = 0; i < this._animatedPages.length; i++) {
-          this._animatedPages[i].style.transition = this._computeTransition(1);
-          this._animatedPages[i].addEventListener('transitionend', this._pageTransitionEndHandler);
-        }
+        // set up current and previous pages and set listener for 'transitionend'
+        this._currentPageElement.style.transition = this._computeTransition(1);
+        this._currentPageElement.addEventListener('transitionend', this._pageTransitionEndHandler);
+        this._previousPageElement.style.transition = this._computeTransition(1);
+        this._previousPageElement.addEventListener('transitionend', this._pageTransitionEndHandler);
 
         // The element is swipe away when swiping get passed the threshold
         this._completeSwipe = Math.abs(trackData.dx) > this._getOffsetWidth() * this.threshold;
@@ -312,10 +310,11 @@
 
       // TODO: this should change the selection of the last item on history
       _setUpSwipePages() {
-        // reset the animated page list
-        this._animatedPages = [];
+        // reset the animated current and previous page
+        this._currentPageElement = null;
+        this._previousPageElement = null;
         // selected page
-        this._initCurrentPage(this.selectedItem, 'none', 0);
+        this._initCurrentPage(this.selectedItem, 0);
 
         // TODO: determine which page to go
         // previous page. for now its the left page. in future it will be history based or previous location based
@@ -328,47 +327,40 @@
         this._leftCandidate = page;//this.items[leftIndex];
         this._leftCandidate.style.zIndex = 2;
         this.selectedItem.style.zIndex = 3;
-        this._initPreviousPage(this._leftCandidate, 'none', -this._getOffsetWidth());
+        this._initPreviousPage(this._leftCandidate, -this._getOffsetWidth());
       }
 
       // initPage - set up page for animatioin
-      _initCurrentPage(page, transition, left) {
+      _initCurrentPage(page, left) {
         if (page == null) {
           return;
         }
         page.style.left = `${left}px`;
-        page.style.transition = transition;
+        page.style.transition = `none`;
         this.toggleClass('iron-swiping', true, page); // this should be added in css styles - left: -100% !important;
 
-        this._animatedPages.push(page);
+        this._currentPageElement = page;
       }
 
-      _initPreviousPage(page, transition, left) {
+      _initPreviousPage(page, left) {
         if (page == null) {
           return;
         }
         page.style.left = `${left * 0.2}px`;
-        page.style.transition = transition;
+        page.style.transition = `none`;
         this.toggleClass('iron-swiping', true, page); // this should be added in css styles - left: -100% !important;
 
-        this._animatedPages.push(page);
+        this._previousPageElement = page;
       }
 
       // animatePages - animate all pages
       _animatePages(x) {
-        this.translate3d(x + 'px', '0px', '0px', this._animatedPages[0]);
-        this.translate3d(`${x * 0.2}` + 'px', '0px', '0px', this._animatedPages[1]);
-
-        // for (var i = 0; i < this._animatedPages.length; i++) {
-        //   this.translate3d(x+'px', '0px', '0px', this._animatedPages[i]);
-        // }
-        
+        this.translate3d(x + 'px', '0px', '0px', this._currentPageElement);
+        this.translate3d(`${x * 0.2}` + 'px', '0px', '0px', this._previousPageElement);
       }
 
       // TODO: Add js docs
       _selectPage(page) {
-        //var index = this.indexOf(page);
-        //this.selected = this._indexToValue(index);
         this.selected = this._valueForItem(page);
       }
 
