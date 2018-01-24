@@ -193,7 +193,7 @@
       _onTrack(event) {
         var track = event.detail;
         // this are checks if touch tracking needs to be cancelled
-        if (track.dx < 0 || this._transitionRunning == true) {
+        if (track.dx < 0) {
           return;
         }
         
@@ -255,7 +255,6 @@
           this._animatedPages[i].addEventListener('transitionend', this._pageTransitionEndHandler);
         }
 
-        this._transitionRunning = true;
         // The element is swipe away when swiping get passed the threshold
         this._completeSwipe = Math.abs(trackData.dx) > this._getOffsetWidth() * this.threshold;
         if (this._completeSwipe) {
@@ -263,9 +262,10 @@
           this._selectPage(this._leftCandidate);
           // trigger the animation in the right direction
           this._animatePages(this._getOffsetWidth() );
-          this._transitionRunning = false;
           // update userSelected property so selectNext and selectPrevious works
           this.userSelected--;
+          // remove the last element of navigationHistory when swipe is complete
+          this.navigationHistory.pop();
         } else {
           // swipe not long enough so go back to current page
           this._animatePages(0);
@@ -321,7 +321,8 @@
         // previous page. for now its the left page. in future it will be history based or previous location based
         var leftIndex = (Number(this.indexOf(this.selectedItem)) - 1 + this.items.length) % this.items.length;
 
-        var value = this.navigationHistory.pop();
+        // var value = this.navigationHistory.pop();
+        var value = this.navigationHistory[this.navigationHistory.length - 1];
         var page = this._valueToItem(value);
 
         this._leftCandidate = page;//this.items[leftIndex];
