@@ -28,7 +28,7 @@
       }
 
       :host > ::content > :not(.iron-selected):not(.iron-swiping) {
-        left: -100% !important;
+        /* left: -100% !important; */
       }
     </style>
 
@@ -118,7 +118,7 @@
         Polymer.Gestures.addListener(this, 'track', e => this.handleTrack(e));
 
         // TODO: add 'iron-select' listener _onIronSelectItem or use selected-item-changed
-        this.addEventListener('iron-select', this._onIronSelectItem);
+        // this.addEventListener('iron-select', this._onIronSelectItem);
       }
 
       animationObserver(state) {
@@ -142,7 +142,7 @@
       }
       
       returnToPage(page) {
-        const direction = 'backward'; 
+        const direction = 'backward';
         this.changePage(page, direction);
       }
 
@@ -167,6 +167,7 @@
       * This method to select previous page with animation
       */
       selectNext() {
+        if (this.animationInProgress == true) return;
         const next = ++this.userSelected % this.items.length;
         const value = this._indexToValue(next);
         const page = this._valueToItem(value);
@@ -177,6 +178,7 @@
       * This method to select next page with animation
       */
       selectPrevious() {
+        if (this.animationInProgress == true) return;
         this.userSelected--;
         if(this.userSelected < 0) this.userSelected = this.items.length - 1;
         const prev = this.userSelected % this.items.length;
@@ -191,7 +193,7 @@
       _onTrack(event) {
         var track = event.detail;
         // this are checks if touch tracking needs to be cancelled
-        if (track.dx < 0) {
+        if (track.dx < 0 || this._transitionRunning == true) {
           return;
         }
         
@@ -223,7 +225,7 @@
         // set up the pages to animate
         this._setUpSwipePages();
 
-        // TODO: add js docs
+        // TODO: add description on what this is doing
         this._animatePages(trackData.dx);
 
         //TODO: this._switchPageIfNecessary(trackData.dx) ??? This is the case when there is only two pages
@@ -252,6 +254,8 @@
           this._animatedPages[i].style.transition = this._computeTransition(1);
           this._animatedPages[i].addEventListener('transitionend', this._pageTransitionEndHandler);
         }
+
+        this._transitionRunning = true;
         // The element is swipe away when swiping get passed the threshold
         this._completeSwipe = Math.abs(trackData.dx) > this._getOffsetWidth() * this.threshold;
         if (this._completeSwipe) {
@@ -259,6 +263,7 @@
           this._selectPage(this._leftCandidate);
           // trigger the animation in the right direction
           this._animatePages(this._getOffsetWidth() );
+          this._transitionRunning = false;
         } else {
           // swipe not long enough so go back to current page
           this._animatePages(0);
@@ -271,6 +276,7 @@
       _pageTransitionEndHandler(event) {
         this.removeAttribute('style');
         this.classList.remove('iron-swiping');
+        this.transitionRunning = false;
       }
 
       _getOffsetWidth() {
@@ -307,7 +313,7 @@
         // reset the animated page list
         this._animatedPages = [];
         // selected page
-        this._initPage(this.selectedItem, 'none', 0);
+        this._initCurrentPage(this.selectedItem, 'none', 0);
 
         // TODO: determine which page to go
         // previous page. for now its the left page. in future it will be history based or previous location based
@@ -319,11 +325,22 @@
         this._leftCandidate = page;//this.items[leftIndex];
         this._leftCandidate.style.zIndex = 2;
         this.selectedItem.style.zIndex = 3;
-        this._initPage(this._leftCandidate, 'none', -this._getOffsetWidth());
+        this._initPreviousPage(this._leftCandidate, 'none', -this._getOffsetWidth());
       }
 
       // initPage - set up page for animatioin
-      _initPage(page, transition, left) {
+      _initCurrentPage(page, transition, left) {
+        if (page == null) {
+          return;
+        }
+        page.style.left = `${left}px`;
+        page.style.transition = transition;
+        this.toggleClass('iron-swiping', true, page); // this should be added in css styles - left: -100% !important;
+
+        this._animatedPages.push(page);
+      }
+
+      _initPreviousPage(page, transition, left) {
         if (page == null) {
           return;
         }
