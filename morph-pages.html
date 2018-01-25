@@ -91,12 +91,6 @@
         };
       }
 
-      /**
-       *  This method is called when event 'track' is fired. This event listener is set up in constructor
-       */
-      handleTrack(event) {
-        this._onTrack(event);
-      }
 
       /**
        * This will return our template inherited from superclass <iron-pages> with our styles inserted
@@ -138,6 +132,7 @@
         this.onFirstLoad = true;
       }
 
+      // Maybe use this to return certain functions when animation is ongoing 
       animationObserver(state) {
         if(state == true) {
           console.log('Animation started');
@@ -145,16 +140,42 @@
           console.log('Animation ended');
         }
       }
-
-      connectedCallback() {
-        super.connectedCallback();
-      }
       
+      /**
+       *  This method is called when event 'track' is fired. This event listener is set up in constructor
+       */
+      handleTrack(event) {
+        this._onTrack(event);
+      }
+
+      /**
+      * This method to select previous page with animation
+      */
+      selectNext() {
+        if (this.animationInProgress == true) return;
+        const next = ++this.userSelected % this.items.length;
+        const value = this._indexToValue(next);
+        const page = this._valueToItem(value);
+        this.goToPage(page);
+      }
+
+      /**
+      * This method to select next page with animation
+      */
+      selectPrevious() {
+        if (this.animationInProgress == true) return;
+        this.userSelected--;
+        if (this.userSelected < 0) this.userSelected = this.items.length - 1;
+        const prev = this.userSelected % this.items.length;
+        const value = this._indexToValue(prev);
+        const page = this._valueToItem(value);
+        this.returnToPage(page);
+      }
+
       goToPage(page) {
         const direction = 'forward';
         // saving our current page to history
         this.navigationHistory.push(this.selected);
-        console.log(this.navigationHistory);
         this.changePage(page, direction);
       }
       
@@ -181,30 +202,6 @@
       animationEnd(props) {
         props.nextPage.removeAttribute('style');
         props.currentPage.removeAttribute('style');
-      }
-
-      /**
-      * This method to select previous page with animation
-      */
-      selectNext() {
-        if (this.animationInProgress == true) return;
-        const next = ++this.userSelected % this.items.length;
-        const value = this._indexToValue(next);
-        const page = this._valueToItem(value);
-        this.goToPage(page);
-      }
-
-      /**
-      * This method to select next page with animation
-      */
-      selectPrevious() {
-        if (this.animationInProgress == true) return;
-        this.userSelected--;
-        if(this.userSelected < 0) this.userSelected = this.items.length - 1;
-        const prev = this.userSelected % this.items.length;
-        const value = this._indexToValue(prev);
-        const page = this._valueToItem(value);
-        this.returnToPage(page);
       }
 
       /**
@@ -303,14 +300,14 @@
         return this._offsetWidth;
       }
 
-      // TODO: deselectItem listening to 'iron-deselect' event
+      /**
+      *  deselectItem listening to 'iron-deselect' event
+      */
       _onIronDeselectItem(event) {
         // Prevent bubbling of same event on child elements
         if(event.target !== this) {
           return;
         }
-        console.log('deselected item', this._lastIndex);
-        
         this._lastIndex = this.indexOf(event.detail.item);
       }
 
@@ -331,18 +328,13 @@
         
         // TODO: Add check for complete animation from selectNext or selectPrevious maybe something like this.completeSelect
         if (this._completeSwipe || this._animationComplete) {
-          console.log('sweet!', this._completeSwipe, this._animationComplete);
           this._completeSwipe = false;
           this._animationComplete = false;
           this.onFirstLoad = false;
         } else {
-          console.log('this.selected', this.selected);
-          
           const targetItemIndex = this.indexOf(event.detail.item);
           const value = this._indexToValue(targetItemIndex);
           const page = this._valueToItem(value);
-          console.log('this._currentPageElement', this._currentPageElement);
-          console.log('Do something with index!', targetItemIndex);
           this.goToLink(page);
         }
       }
@@ -352,7 +344,6 @@
         // saving our current page to history
         let lastItemValue = this._indexToValue(this._lastIndex);
         this.navigationHistory.push(lastItemValue);
-        console.log(this.navigationHistory);
         this.changePageByLink(page, direction);
       }
 
