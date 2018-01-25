@@ -273,9 +273,11 @@
           this._selectPage(this._leftCandidate);
           // trigger the animation in the right direction
           this._animatePages(this._getOffsetWidth() );
+
           // update userSelected property so selectNext and selectPrevious works
-          this.userSelected--;
+          this.userSelected = this._valueToIndex(this.selected);
           // remove the last element of navigationHistory when swipe is complete
+
           this.navigationHistory.pop();
         } else {
           // swipe not long enough so go back to current page
