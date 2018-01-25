@@ -115,10 +115,8 @@
         super();
         this._currentPageElement = null;
         this._previousPageElement = null;
-        Polymer.Gestures.addListener(this, 'track', e => this.handleTrack(e));
-
-        // TODO: implement animation when selectedItem change
         this.onFirstLoad = true;
+        Polymer.Gestures.addListener(this, 'track', e => this.handleTrack(e));
       }
       
       ready() {
@@ -129,7 +127,6 @@
 
       connectedCallback() {
         super.connectedCallback();
-        this.onFirstLoad = true;
       }
 
       // Maybe use this to return certain functions when animation is ongoing 
@@ -139,13 +136,6 @@
         } else {
           console.log('Animation ended');
         }
-      }
-      
-      /**
-       *  This method is called when event 'track' is fired. This event listener is set up in constructor
-       */
-      handleTrack(event) {
-        this._onTrack(event);
       }
 
       /**
@@ -202,6 +192,13 @@
       animationEnd(props) {
         props.nextPage.removeAttribute('style');
         props.currentPage.removeAttribute('style');
+      }
+
+      /**
+       *  This method is called when event 'track' is fired. This event listener is set up in constructor
+       */
+      handleTrack(event) {
+        this._onTrack(event);
       }
 
       /**
@@ -311,10 +308,7 @@
         this._lastIndex = this.indexOf(event.detail.item);
       }
 
-
-
-
-      // TODO: onIronSelectItem
+      // onIronSelectItem
       _onIronSelectItem(event) {
         // prevent bubbling of same event to child. 
         if (event.target !== this) {
@@ -326,7 +320,7 @@
           return;
         }
         
-        // TODO: Add check for complete animation from selectNext or selectPrevious maybe something like this.completeSelect
+        // check for complete swipe or complete animation from selectNext or selectPrevious 
         if (this._completeSwipe || this._animationComplete) {
           this._completeSwipe = false;
           this._animationComplete = false;
