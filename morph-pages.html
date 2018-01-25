@@ -118,8 +118,19 @@
         this._previousPageElement = null;
         Polymer.Gestures.addListener(this, 'track', e => this.handleTrack(e));
 
-        // TODO: add 'iron-select' listener _onIronSelectItem or use selected-item-changed
-        // this.addEventListener('iron-select', this._onIronSelectItem);
+        // TODO: implement animation when selectedItem change
+        this.onFirstLoad = true;
+      }
+      
+      ready() {
+        super.ready();
+        this.addEventListener('iron-select', this._onIronSelectItem);
+        this.addEventListener('iron-deselect', this._onIronDeselectItem);
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this.onFirstLoad = true;
       }
 
       animationObserver(state) {
@@ -287,7 +298,19 @@
         return this._offsetWidth;
       }
 
-      // TODO: deselectItem
+      // TODO: deselectItem listening to 'iron-deselect' event
+      _onIronDeselectItem(event) {
+        // Prevent bubbling of same event on child elements
+        if(event.target !== this) {
+          return;
+        }
+        console.log('deselected item', this._lastIndex);
+        
+        this._lastIndex = this.indexOf(event.detail.item);
+      }
+
+
+
 
       // TODO: onIronSelectItem
       _onIronSelectItem(event) {
@@ -298,18 +321,59 @@
         if (event.target !== this) {
           return;
         }
-
-        var index = this.indexOf(event.detail.item);
-        console.log('index', index);
+        // on first load no animations
+        if (this.onFirstLoad == true) {
+          console.log('return me!');
+          this.onFirstLoad = false;
+          return;
+        }
         
-        if (this._completeSwipe) {
+        // TODO: Add check for complete animation from selectNext or selectPrevious maybe something like this.completeSelect
+        if (this._completeSwipe || this._animationComplete) {
+          console.log('sweet!', this._completeSwipe, this._animationComplete);
           this._completeSwipe = false;
-          // TODO: THIS IS A GOOD PLACE TO RESET PAGES
-          // this._resetPage(page);
+          this._animationComplete = false;
+          this.onFirstLoad = false;
         } else {
-          // do something
+          console.log('this.selected', this.selected);
+          
+          const targetItemIndex = this.indexOf(event.detail.item);
+          const value = this._indexToValue(targetItemIndex);
+          const page = this._valueToItem(value);
+          console.log('this._currentPageElement', this._currentPageElement);
+          console.log('Do something with index!', targetItemIndex);
+          this.goToLink(page);
         }
       }
+
+      goToLink(page) {
+        const direction = 'forward';
+        // saving our current page to history
+        let lastItemValue = this._indexToValue(this._lastIndex);
+        this.navigationHistory.push(lastItemValue);
+        console.log(this.navigationHistory);
+        this.changePageByLink(page, direction);
+      }
+
+      changePageByLink(page, direction) {
+        let animation;
+        let lastItemValue = this._indexToValue(this._lastIndex);
+        if (this.platform == 'android') {
+          animation = androidAnimation(this, this._valueToItem(lastItemValue), page, direction);
+        } else if (this.platform == 'ios') {
+          animation = iosAnimation(this, this._valueToItem(lastItemValue), page, direction);
+        }
+
+        animation.then(() => this._animationCompleted(page));
+      }
+
+      _animationCompleted(page) {
+        this._selectPage(page);
+        this._animationComplete = false;
+      }
+
+
+
 
       // TODO: this should change the selection of the last item on history
       _setUpSwipePages() {
