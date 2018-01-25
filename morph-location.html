@@ -1,0 +1,59 @@
+<link rel="import" href="../morph-element/morph-element.html">
+<link rel="import" href="../iron-location/iron-location.html">
+
+<dom-module id="morph-location">
+
+  <script>
+    const IronLocationSuperClass = customElements.get('iron-location');
+
+    class MorphLocation extends MorphElement(IronLocationSuperClass) {
+      static get is() { return 'morph-location'; }
+
+      static get properties() { 
+        return {
+          lastNavigationDirection: {
+            type: String,
+            //value: null, // no default value, possible values: 'forward', 'backward'
+            notify: true,
+            reflectToAttribute: true
+          }
+        }; 
+      }
+
+      constructor() {
+        let _locationChangeHandler = () => {
+          this.set('lastNavigationDirection', 'forward');
+        };
+
+        let _statePopHandler = () => {
+          this.set('lastNavigationDirection', 'backward');
+        };
+
+        window.addEventListener('hashchange', _locationChangeHandler);
+        window.addEventListener('popstate', _statePopHandler);
+
+        super();
+
+        this._locationChangeHandler = _locationChangeHandler;
+        this._statePopHandler = _statePopHandler;
+      }
+
+      ready() {
+        super.ready();
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+      }
+
+      disconnectedCallback() {
+        super.disconnectedCallback();
+
+        window.removeEventListener('location-changed', this._locationChangeHandler);
+        window.removeEventListener('popstate', this._statePopHandler);
+      }
+    }
+
+    window.customElements.define(MorphLocation.is, MorphLocation);
+  </script>
+</dom-module>
