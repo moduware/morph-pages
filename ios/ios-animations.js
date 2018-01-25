@@ -1,6 +1,7 @@
 function iosAnimation(self, currentPage, nextPage, direction) {
   return new Promise((resolve, reject) => {
     self.animationInProgress = true;
+    self._animationComplete = false;
 
     let props = {
       duration: 400,
@@ -32,6 +33,7 @@ function iosAnimation(self, currentPage, nextPage, direction) {
         props.overlayElement.parentNode.removeChild(props.overlayElement);
         props.overlayElement = null;
         self.animationInProgress = false;
+        self._animationComplete = true;
         resolve();
       }, timestamp);
     });
