@@ -98,7 +98,7 @@
             </div>
             <div class="container">
               <morph-location hash="{{currentPage}}" last-navigation-direction="{{direction}}" dwell-time="0"></morph-location>
-              <morph-pages selected="{{currentPage}}" page-change-animation-direction="[[direction]]" attr-for-selected="name" platform="ios">
+              <morph-pages selected="{{currentPage}}" page-change-animation-direction="[[direction]]" attr-for-selected="name" platform="ios" fallback-selection="one">
                 <div name="one" class="page background-green"><h1>One</h1></div>
                 <div name="two" class="page background-white"><h1>Two</h1></div>
                 <div name="three" class="page background-green"><h1>Three</h1></div>
@@ -144,7 +144,7 @@
         </dom-bind>
         <script>
           var bind = document.querySelector('dom-bind');
-          bind.currentPage = 'one';
+          // bind.currentPage = 'one';
         </script>
       </demo-snippet>
     </div>
