@@ -244,12 +244,6 @@
         this.selected = this._valueForItem(page);
       }
 
-      // where transition is computed
-      _computeTransition(factor) {
-        var duration = factor * 400;
-        return `transform ${duration}ms ${this.transitionTimingFunction}`;
-      }
-
     }
 
     window.customElements.define(MorphPages.is, MorphPages);

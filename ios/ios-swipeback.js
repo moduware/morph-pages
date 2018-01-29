@@ -55,9 +55,9 @@ function _trackEnd(self, trackData) {
   }
 
   // set up current and previous pages and set listener for 'transitionend'
-  self._currentPageElement.style.transition = self._computeTransition(1);
+  self._currentPageElement.style.transition = this._computeTransition(self, 1);
   self._currentPageElement.addEventListener('transitionend', self._pageTransitionEndHandler);
-  self._previousPageElement.style.transition = self._computeTransition(1);
+  self._previousPageElement.style.transition = this._computeTransition(self, 1);
   self._previousPageElement.addEventListener('transitionend', self._pageTransitionEndHandler);
 
   // The element is swipe away when swiping get passed the threshold
@@ -135,4 +135,12 @@ function _initPreviousPage(self, page, left) {
   self.toggleClass('iron-swiping', true, page); // this should be added in css styles - left: -100% !important;
 
   self._previousPageElement = page;
+}
+
+/**
+ * where transition is computed
+ */
+function _computeTransition(self, factor) {
+  var duration = factor * 400;
+  return `transform ${duration}ms ${self.transitionTimingFunction}`;
 }
