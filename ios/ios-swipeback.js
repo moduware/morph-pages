@@ -31,10 +31,8 @@ function _trackStart(self, trackData) {
   // set up the pages to animate
   this._setUpSwipePages(self);
 
-  // TODO: add description on what this is doing
+  // Translate current page and previous page using trackDate.dx
   self._animatePages(trackData.dx);
-
-  //TODO: this._switchPageIfNecessary(trackData.dx) ??? This is the case when there is only two pages
 
   // Prevent regular touchmove event (disables vertical scroll) the other half which removes this is in the _trackEnd()
   //TODO: window.addEventListener('touchmove', this._preventTouchMove);
@@ -44,7 +42,7 @@ function _trackStart(self, trackData) {
  *  Gets all data event.details as long as track.state = 'track'. 
  */
 function _trackMove(self, trackData) {
-  //TODO: send data for animation progression
+  // Translate current page and previous page using trackDate.dx
   self._animatePages(trackData.dx);
 }
 

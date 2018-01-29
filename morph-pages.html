@@ -292,7 +292,9 @@
         this.userSelected = this._valueToIndex(this.selected);
       }
 
-      // animatePages - animate all pages
+      /**
+       * translate current page and previous page
+       */
       _animatePages(x) {
         this.translate3d(x + 'px', '0px', '0px', this._currentPageElement);
         this.translate3d(`${x * 0.2}` + 'px', '0px', '0px', this._previousPageElement);
