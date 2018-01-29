@@ -240,14 +240,11 @@
         }
 
         if (this._lastIndex == undefined) {
-          console.log('i am inside if (lastIndex)', this._lastIndex, this.onFirstLoad);
           return;
         }
 
         // on first load no animations
         if (this.onFirstLoad == true) {
-          console.log('i am inside onFirstLoad', this._lastIndex, this.onFirstLoad);
-          
           this.onFirstLoad = false;
           return;
         }
@@ -300,7 +297,9 @@
         this.translate3d(`${x * 0.2}` + 'px', '0px', '0px', this._previousPageElement);
       }
 
-      // TODO: Add js docs
+      /**
+       * Change this.selected to what is the current value of page
+       */
       _selectPage(page) {
         this.selected = this._valueForItem(page);
       }
