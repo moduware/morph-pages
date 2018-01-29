@@ -288,9 +288,11 @@
       _animationCompleted(page) {
         this._selectPage(page);
         this._animationComplete = false;
+        // update userSelected property so selectNext and selectPrevious works
+        this.userSelected = this._valueToIndex(this.selected);
       }
 
-      // initPage - set up page for animatioin
+      // TODO: move to ios-swipebacl.js initPage - set up page for animatioin
       _initCurrentPage(page, left) {
         if (page == null) {
           return;
@@ -302,6 +304,7 @@
         this._currentPageElement = page;
       }
 
+      // TODO: move to ios-swipebacl.js
       _initPreviousPage(page, left) {
         if (page == null) {
           return;
