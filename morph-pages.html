@@ -174,7 +174,6 @@
       goToPage(page) {
         const direction = 'forward';
         // saving our current page to history
-        // this.navigationHistory.push(this.selected);
         this.push('navigationHistory', this.selected);
         this.changePage(page, direction);
       }
@@ -270,7 +269,6 @@
         const direction = this.pageChangeAnimationDirection; //'forward';
         // saving our current page to history
         let lastItemValue = this._indexToValue(this._lastIndex);
-        // this.navigationHistory.push(lastItemValue);
         this.push('navigationHistory', lastItemValue);
         this.changePageByLink(page, direction);
       }
@@ -290,28 +288,6 @@
       _animationCompleted(page) {
         this._selectPage(page);
         this._animationComplete = false;
-      }
-
-      // TODO: this should change the selection of the last item on history
-      _setUpSwipePages() {
-        // reset the animated current and previous page
-        this._currentPageElement = null;
-        this._previousPageElement = null;
-        // selected page
-        this._initCurrentPage(this.selectedItem, 0);
-
-        // TODO: determine which page to go
-        // previous page. for now its the left page. in future it will be history based or previous location based
-        var leftIndex = (Number(this.indexOf(this.selectedItem)) - 1 + this.items.length) % this.items.length;
-
-        // var value = this.navigationHistory.pop();
-        var value = this.navigationHistory[this.navigationHistory.length - 1];
-        var page = this._valueToItem(value);
-
-        this._leftCandidate = page;//this.items[leftIndex];
-        this._leftCandidate.style.zIndex = 2;
-        this.selectedItem.style.zIndex = 3;
-        this._initPreviousPage(this._leftCandidate, -this._getOffsetWidth());
       }
 
       // initPage - set up page for animatioin

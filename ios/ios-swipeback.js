@@ -29,7 +29,7 @@ function _trackStart(self, trackData) {
   }
 
   // set up the pages to animate
-  self._setUpSwipePages();
+  this._setUpSwipePages(self);
 
   // TODO: add description on what this is doing
   self._animatePages(trackData.dx);
@@ -82,4 +82,29 @@ function _trackEnd(self, trackData) {
 
   // enable regular touchmove event ( enables vertical scroll again)
   // window.removeEventListener('touchmove', this._preventTouchMove);
+}
+
+/**
+ * 
+ * @param {*} self 
+ */
+function _setUpSwipePages(self) {
+  // reset the animated current and previous page
+  self._currentPageElement = null;
+  self._previousPageElement = null;
+  // selected page
+  self._initCurrentPage(self.selectedItem, 0);
+
+  // TODO: determine which page to go
+  // previous page. for now its the left page. in future it will be history based or previous location based
+  var leftIndex = (Number(self.indexOf(self.selectedItem)) - 1 + self.items.length) % self.items.length;
+
+  // var value = self.navigationHistory.pop();
+  var value = self.navigationHistory[self.navigationHistory.length - 1];
+  var page = self._valueToItem(value);
+
+  self._leftCandidate = page;//self.items[leftIndex];
+  self._leftCandidate.style.zIndex = 2;
+  self.selectedItem.style.zIndex = 3;
+  self._initPreviousPage(self._leftCandidate, -self._getOffsetWidth());
 }
