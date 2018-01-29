@@ -1,5 +1,6 @@
 <link rel="import" href="../iron-pages/iron-pages.html">
 <link rel="import" href="../polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="/bower_components/polymer/lib/utils/render-status.html">
 <link rel="import" href="../morph-element/morph-element.html">
 <link rel="import" href="/scripts.html">
 
@@ -124,11 +125,19 @@
         this.addEventListener('iron-select', this._onIronSelectItem);
         this.addEventListener('iron-deselect', this._onIronDeselectItem);
       }
-
+      
       connectedCallback() {
         super.connectedCallback();
+        Polymer.RenderStatus.afterNextRender(this, function() {
+          this.onFirstLoad = false;
+        });
       }
 
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        this.removeEventListener('iron-select', this._onIronSelectItem);
+      }
+      
       // Maybe use this to return certain functions when animation is ongoing 
       animationObserver(state) {
         if(state == true) {
@@ -165,7 +174,8 @@
       goToPage(page) {
         const direction = 'forward';
         // saving our current page to history
-        this.navigationHistory.push(this.selected);
+        // this.navigationHistory.push(this.selected);
+        this.push('navigationHistory', this.selected);
         this.changePage(page, direction);
       }
       
@@ -198,31 +208,9 @@
        *  This method is called when event 'track' is fired. This event listener is set up in constructor
        */
       handleTrack(event) {
-        this._onTrack(event);
+        _onTrack(this, event);
       }
-
-      /**
-       * Listener callback handleTrack() detects track and uses trackStart, trackMove and trackEnd to manage swiping
-       */
-      _onTrack(event) {
-        var track = event.detail;
-        // this are checks if touch tracking needs to be cancelled
-        if (track.dx < 0 || this.platform != 'ios') {
-          return;
-        }
-        
-        // this is checking for track.state == equal and swipe is left to right
-        if (track.state === 'start' && Math.abs(track.dy) < Math.abs(track.dx)) {
-          this._swipeStarted = true;
-          this._trackStart(track);
-        } else if (track.state == 'track' && this._swipeStarted) {
-          this._trackMove(track);
-        } else if (track.state == 'end' && this._swipeStarted) {
-          this._trackEnd(track);
-        }
-      }
-
-       
+      
       /**
        *  Detects track.state = start. tracking is triggered by this method
        */
@@ -308,6 +296,7 @@
           return;
         }
         this._lastIndex = this.indexOf(event.detail.item);
+        this.firstRenderDone = true;
       }
 
       // onIronSelectItem
@@ -316,8 +305,16 @@
         if (event.target !== this) {
           return;
         }
+
+        if (this._lastIndex == undefined) {
+          console.log('i am inside if (lastIndex)', this._lastIndex, this.onFirstLoad);
+          return;
+        }
+
         // on first load no animations
         if (this.onFirstLoad == true) {
+          console.log('i am inside onFirstLoad', this._lastIndex, this.onFirstLoad);
+          
           this.onFirstLoad = false;
           return;
         }
@@ -339,7 +336,10 @@
         const direction = this.pageChangeAnimationDirection; //'forward';
         // saving our current page to history
         let lastItemValue = this._indexToValue(this._lastIndex);
-        this.navigationHistory.push(lastItemValue);
+        // this.navigationHistory.push(lastItemValue);
+        this.push('navigationHistory', lastItemValue);
+        console.log('Navigation History', this.navigationHistory);
+        
         this.changePageByLink(page, direction);
       }
 
