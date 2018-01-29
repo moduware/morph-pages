@@ -73,7 +73,6 @@ function _trackEnd(self, trackData) {
     // update userSelected property so selectNext and selectPrevious works
     self.userSelected = self._valueToIndex(self.selected);
     // remove the last element of navigationHistory when swipe is complete
-
     self.navigationHistory.pop();
   } else {
     // swipe not long enough so go back to current page
@@ -95,15 +94,11 @@ function _setUpSwipePages(self) {
   // selected page
   self._initCurrentPage(self.selectedItem, 0);
 
-  // TODO: determine which page to go
-  // previous page. for now its the left page. in future it will be history based or previous location based
-  var leftIndex = (Number(self.indexOf(self.selectedItem)) - 1 + self.items.length) % self.items.length;
-
-  // var value = self.navigationHistory.pop();
+  // gets the last element of navigationHistory and assigns to previous page
   var value = self.navigationHistory[self.navigationHistory.length - 1];
   var page = self._valueToItem(value);
 
-  self._leftCandidate = page;//self.items[leftIndex];
+  self._leftCandidate = page;
   self._leftCandidate.style.zIndex = 2;
   self.selectedItem.style.zIndex = 3;
   self._initPreviousPage(self._leftCandidate, -self._getOffsetWidth());
