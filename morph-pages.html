@@ -199,6 +199,24 @@
       _handleTrackSwipe(event) {
         _onTrack(this, event);
       }
+
+      /**
+       * Listens to 'iron-select' and calls animation unless not needed
+       */
+      _onIronSelectItem(event) {
+        _animateOnIronSelect(this, event);
+      }
+
+      /**
+       *  deselectItem listening to 'iron-deselect' event
+       */
+      _onIronDeselectItem(event) {
+        // Prevent bubbling of same event on child elements
+        if (event.target !== this) {
+          return;
+        }
+        this._lastIndex = this.indexOf(event.detail.item);
+      }
       
       _pageTransitionEndHandler(event) {
         this.removeAttribute('style');
@@ -209,74 +227,6 @@
       _getOffsetWidth() {
         this._offsetWidth = this.offsetWidth;
         return this._offsetWidth;
-      }
-
-      /**
-      *  deselectItem listening to 'iron-deselect' event
-      */
-      _onIronDeselectItem(event) {
-        // Prevent bubbling of same event on child elements
-        if(event.target !== this) {
-          return;
-        }
-        this._lastIndex = this.indexOf(event.detail.item);
-      }
-
-      // onIronSelectItem
-      _onIronSelectItem(event) {
-        // prevent bubbling of same event to child. 
-        if (event.target !== this) {
-          return;
-        }
-
-        if (this._lastIndex == undefined) {
-          return;
-        }
-
-        // on first load no animations
-        if (this.onFirstLoad == true) {
-          this.onFirstLoad = false;
-          return;
-        }
-        
-        // check for complete swipe or complete animation from selectNext or selectPrevious 
-        if (this._completeSwipe || this._animationComplete) {
-          this._completeSwipe = false;
-          this._animationComplete = false;
-          this.onFirstLoad = false;
-        } else {
-          const targetItemIndex = this.indexOf(event.detail.item);
-          const value = this._indexToValue(targetItemIndex);
-          const page = this._valueToItem(value);
-          this.goToLink(page);
-        }
-      }
-
-      goToLink(page) {
-        const direction = this.pageChangeAnimationDirection; //'forward';
-        // saving our current page to history
-        let lastItemValue = this._indexToValue(this._lastIndex);
-        this.push('navigationHistory', lastItemValue);
-        this.changePageByLink(page, direction);
-      }
-
-      changePageByLink(page, direction) {
-        let animation;
-        let lastItemValue = this._indexToValue(this._lastIndex);
-        if (this.platform == 'android') {
-          animation = androidAnimation(this, this._valueToItem(lastItemValue), page, direction);
-        } else if (this.platform == 'ios') {
-          animation = iosAnimation(this, this._valueToItem(lastItemValue), page, direction);
-        }
-
-        animation.then(() => this._animationCompleted(page));
-      }
-
-      _animationCompleted(page) {
-        this._selectPage(page);
-        this._animationComplete = false;
-        // update userSelected property so selectNext and selectPrevious works
-        this.userSelected = this._valueToIndex(this.selected);
       }
 
       /**
