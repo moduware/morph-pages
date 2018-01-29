@@ -84,7 +84,7 @@ function _trackEnd(self, trackData) {
 }
 
 /**
- * 
+ *  Sets selected page and previous page style ready for animation
  * @param {*} self 
  */
 function _setUpSwipePages(self) {
@@ -92,7 +92,7 @@ function _setUpSwipePages(self) {
   self._currentPageElement = null;
   self._previousPageElement = null;
   // selected page
-  self._initCurrentPage(self.selectedItem, 0);
+  this._initCurrentPage(self, self.selectedItem, 0);
 
   // gets the last element of navigationHistory and assigns to previous page
   var value = self.navigationHistory[self.navigationHistory.length - 1];
@@ -101,5 +101,40 @@ function _setUpSwipePages(self) {
   self._leftCandidate = page;
   self._leftCandidate.style.zIndex = 2;
   self.selectedItem.style.zIndex = 3;
-  self._initPreviousPage(self._leftCandidate, -self._getOffsetWidth());
+  this._initPreviousPage(self, self._leftCandidate, -self._getOffsetWidth());
+}
+
+// initPage - set up page for animatioin
+/**
+ * Set up current page for animation
+ * @param {*} self 
+ * @param {*} page 
+ * @param {*} left 
+ */
+function _initCurrentPage(self, page, left) {
+  if (page == null) {
+    return;
+  }
+  page.style.left = `${left}px`;
+  page.style.transition = `none`;
+  self.toggleClass('iron-swiping', true, page); // this should be added in css styles - left: -100% !important;
+
+  self._currentPageElement = page;
+}
+
+/**
+ * Set up previous page or last page for animation
+ * @param {*} self 
+ * @param {*} page 
+ * @param {*} left 
+ */
+function _initPreviousPage(self, page, left) {
+  if (page == null) {
+    return;
+  }
+  page.style.left = `${left * 0.2}px`;
+  page.style.transition = `none`;
+  self.toggleClass('iron-swiping', true, page); // this should be added in css styles - left: -100% !important;
+
+  self._previousPageElement = page;
 }

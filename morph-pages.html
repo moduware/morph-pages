@@ -292,30 +292,6 @@
         this.userSelected = this._valueToIndex(this.selected);
       }
 
-      // TODO: move to ios-swipebacl.js initPage - set up page for animatioin
-      _initCurrentPage(page, left) {
-        if (page == null) {
-          return;
-        }
-        page.style.left = `${left}px`;
-        page.style.transition = `none`;
-        this.toggleClass('iron-swiping', true, page); // this should be added in css styles - left: -100% !important;
-
-        this._currentPageElement = page;
-      }
-
-      // TODO: move to ios-swipebacl.js
-      _initPreviousPage(page, left) {
-        if (page == null) {
-          return;
-        }
-        page.style.left = `${left * 0.2}px`;
-        page.style.transition = `none`;
-        this.toggleClass('iron-swiping', true, page); // this should be added in css styles - left: -100% !important;
-
-        this._previousPageElement = page;
-      }
-
       // animatePages - animate all pages
       _animatePages(x) {
         this.translate3d(x + 'px', '0px', '0px', this._currentPageElement);
