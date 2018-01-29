@@ -54,8 +54,7 @@
       static get properties() {
         return {
           animationInProgress: {
-            type: Boolean,
-            observer: 'animationObserver'
+            type: Boolean
           },
 
           userSelected: {
@@ -136,15 +135,6 @@
       disconnectedCallback() {
         super.disconnectedCallback();
         this.removeEventListener('iron-select', this._onIronSelectItem);
-      }
-      
-      // Maybe use this to return certain functions when animation is ongoing 
-      animationObserver(state) {
-        if(state == true) {
-          console.log('Animation started');
-        } else {
-          console.log('Animation ended');
-        }
       }
 
       /**
