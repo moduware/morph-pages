@@ -117,7 +117,7 @@
         this._currentPageElement = null;
         this._previousPageElement = null;
         this.onFirstLoad = true;
-        Polymer.Gestures.addListener(this, 'track', e => this.handleTrack(e));
+        Polymer.Gestures.addListener(this, 'track', e => this._handleTrackSwipe(e));
       }
       
       ready() {
@@ -207,75 +207,10 @@
       /**
        *  This method is called when event 'track' is fired. This event listener is set up in constructor
        */
-      handleTrack(event) {
+      _handleTrackSwipe(event) {
         _onTrack(this, event);
       }
       
-      /**
-       *  Detects track.state = start. tracking is triggered by this method
-       */
-      _trackStart(trackData) {
-        if (this.navigationHistory.length == 0) {
-          this._swipeStarted = false;
-          return;
-        }
-
-        // set up the pages to animate
-        this._setUpSwipePages();
-
-        // TODO: add description on what this is doing
-        this._animatePages(trackData.dx);
-
-        //TODO: this._switchPageIfNecessary(trackData.dx) ??? This is the case when there is only two pages
-
-        // Prevent regular touchmove event (disables vertical scroll) the other half which removes this is in the _trackEnd()
-        //TODO: window.addEventListener('touchmove', this._preventTouchMove);
-      }
-
-      /** 
-       *  Gets all data event.details as long as track.state = 'track'. 
-       */
-      _trackMove(trackData) {
-        //TODO: send data for animation progression
-        this._animatePages(trackData.dx);
-      }
-
-      /**
-       * This computes transition if pages to swipe or move back to current page. 
-       */
-      _trackEnd(trackData) {
-        if (this._swipeStarted == false) {
-          return;
-        }
-        
-        // set up current and previous pages and set listener for 'transitionend'
-        this._currentPageElement.style.transition = this._computeTransition(1);
-        this._currentPageElement.addEventListener('transitionend', this._pageTransitionEndHandler);
-        this._previousPageElement.style.transition = this._computeTransition(1);
-        this._previousPageElement.addEventListener('transitionend', this._pageTransitionEndHandler);
-
-        // The element is swipe away when swiping get passed the threshold
-        this._completeSwipe = Math.abs(trackData.dx) > this._getOffsetWidth() * this.threshold;
-        if (this._completeSwipe) {
-          // update selected
-          this._selectPage(this._leftCandidate);
-          // trigger the animation in the right direction
-          this._animatePages(this._getOffsetWidth() );
-
-          // update userSelected property so selectNext and selectPrevious works
-          this.userSelected = this._valueToIndex(this.selected);
-          // remove the last element of navigationHistory when swipe is complete
-
-          this.navigationHistory.pop();
-        } else {
-          // swipe not long enough so go back to current page
-          this._animatePages(0);
-        }
-        
-        // enable regular touchmove event ( enables vertical scroll again)
-        // window.removeEventListener('touchmove', this._preventTouchMove);
-      }
-
       _pageTransitionEndHandler(event) {
         this.removeAttribute('style');
         this.classList.remove('iron-swiping');
@@ -296,7 +231,6 @@
           return;
         }
         this._lastIndex = this.indexOf(event.detail.item);
-        this.firstRenderDone = true;
       }
 
       // onIronSelectItem
@@ -338,8 +272,6 @@
         let lastItemValue = this._indexToValue(this._lastIndex);
         // this.navigationHistory.push(lastItemValue);
         this.push('navigationHistory', lastItemValue);
-        console.log('Navigation History', this.navigationHistory);
-        
         this.changePageByLink(page, direction);
       }
 
