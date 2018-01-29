@@ -61,12 +61,12 @@ function _trackEnd(self, trackData) {
   self._previousPageElement.addEventListener('transitionend', self._pageTransitionEndHandler);
 
   // The element is swipe away when swiping get passed the threshold
-  self._completeSwipe = Math.abs(trackData.dx) > self._getOffsetWidth() * self.threshold;
+  self._completeSwipe = Math.abs(trackData.dx) > this._getOffsetWidth(self) * self.threshold;
   if (self._completeSwipe) {
     // update selected
     self._selectPage(self._leftCandidate);
     // trigger the animation in the right direction
-    self._animatePages(self._getOffsetWidth());
+    self._animatePages(this._getOffsetWidth(self));
 
     // update userSelected property so selectNext and selectPrevious works
     self.userSelected = self._valueToIndex(self.selected);
@@ -99,7 +99,7 @@ function _setUpSwipePages(self) {
   self._leftCandidate = page;
   self._leftCandidate.style.zIndex = 2;
   self.selectedItem.style.zIndex = 3;
-  this._initPreviousPage(self, self._leftCandidate, -self._getOffsetWidth());
+  this._initPreviousPage(self, self._leftCandidate, -this._getOffsetWidth(self));
 }
 
 // initPage - set up page for animatioin
@@ -143,4 +143,12 @@ function _initPreviousPage(self, page, left) {
 function _computeTransition(self, factor) {
   var duration = factor * 400;
   return `transform ${duration}ms ${self.transitionTimingFunction}`;
+}
+
+/**
+ * Gets the offsetWidth
+ */
+function _getOffsetWidth(self) {
+  self._offsetWidth = self.offsetWidth;
+  return self._offsetWidth;
 }
