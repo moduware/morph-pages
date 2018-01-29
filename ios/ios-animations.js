@@ -15,7 +15,6 @@ function iosAnimation(self, currentPage, nextPage, direction) {
       overlayElement: createOverlayElement()
     };
     
-    // TODO: refactor this if/else statement into its own function to make iosAnimation more readable and less lines
     // Transitions for pages
     if(direction == 'forward') {
       setIosForwardAnimationInitialState(props);
