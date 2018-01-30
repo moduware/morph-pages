@@ -113,7 +113,6 @@ function _initCurrentPage(self, page, left) {
   }
   page.style.left = `${left}px`;
   page.style.transition = `none`;
-  self.toggleClass('iron-swiping', true, page); // this should be added in css styles - left: -100% !important;
 
   self._currentPageElement = page;
 }
@@ -130,7 +129,6 @@ function _initPreviousPage(self, page, left) {
   }
   page.style.left = `${left * 0.2}px`;
   page.style.transition = `none`;
-  self.toggleClass('iron-swiping', true, page); // this should be added in css styles - left: -100% !important;
 
   self._previousPageElement = page;
 }
@@ -139,8 +137,8 @@ function _initPreviousPage(self, page, left) {
  * where transition is computed
  */
 function _computeTransition(self, factor) {
-  var duration = factor * 400;
-  return `transform ${duration}ms ${self.transitionTimingFunction}`;
+  var duration = factor * 400; // let iosDuration = 400;
+  return `transform ${duration}ms ${self.transitionTimingFunction}`; // change ${duration} to ${iosDuration}
 }
 
 /**
