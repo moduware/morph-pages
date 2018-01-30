@@ -84,7 +84,6 @@
         };
       }
 
-
       /**
        * This will return our template inherited from superclass <iron-pages> with our styles inserted
        */
@@ -113,6 +112,7 @@
       
       ready() {
         super.ready();
+        // Set up events listener everytime selected is change and current selected is deselected 
         this.addEventListener('iron-select', this._onIronSelectItem);
         this.addEventListener('iron-deselect', this._onIronDeselectItem);
       }
@@ -126,6 +126,9 @@
         this.removeEventListener('iron-select', this._onIronSelectItem);
       }
 
+      /**
+       * Used by android-animation.js and ios-animation.js to remove styles on current and previous pages
+       */
       animationEnd(props) {
         props.nextPage.removeAttribute('style');
         props.currentPage.removeAttribute('style');
@@ -146,13 +149,14 @@
       }
 
       /**
-       *  deselectItem listening to 'iron-deselect' event
+       *  deselectItem listening to 'iron-deselect' event. Fires everytime selected is deselected
        */
       _onIronDeselectItem(event) {
         // Prevent bubbling of same event on child elements
         if (event.target !== this) {
           return;
         }
+        // this assigns the index of currently deselected item to _lastIndex
         this._lastIndex = this.indexOf(event.detail.item);
       }
 
