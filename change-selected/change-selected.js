@@ -15,17 +15,10 @@ function _animateOnIronSelect(self, event) {
     return;
   }
 
-  // on first load no animations
-  if (self.onFirstLoad == true) {
-    self.onFirstLoad = false;
-    return;
-  }
-
   // check for complete swipe or complete animation from selectNext or selectPrevious 
   if (self._completeSwipe || self._animationComplete) {
     self._completeSwipe = false;
     self._animationComplete = false;
-    self.onFirstLoad = false;
   } else {
     const targetItemIndex = self.indexOf(event.detail.item);
     const value = self._indexToValue(targetItemIndex);
