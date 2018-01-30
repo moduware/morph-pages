@@ -10,7 +10,8 @@ function _animateOnIronSelect(self, event) {
     return;
   }
 
-  // 
+  // This variable _lastIndex is set from _onIronDeselectItem() which callback to event that listen to 'iron-deselect'
+  // This prevents this _animateOnIronSelect from running on first load
   if (self._lastIndex == undefined) {
     return;
   }
