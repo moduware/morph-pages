@@ -109,19 +109,16 @@
         this._currentPageElement = null;
         this._previousPageElement = null;
         Polymer.Gestures.addListener(this, 'track', e => this._handleTrackSwipe(e));
-        console.log('constructor this._lastIndex', this._lastIndex);
       }
       
       ready() {
         super.ready();
         this.addEventListener('iron-select', this._onIronSelectItem);
         this.addEventListener('iron-deselect', this._onIronDeselectItem);
-        console.log('ready this._lastIndex', this._lastIndex);
       }
       
       connectedCallback() {
         super.connectedCallback();
-        console.log('connectedCallback this._lastIndex', this._lastIndex);
       }
 
       disconnectedCallback() {
@@ -145,8 +142,6 @@
        * Listens to 'iron-select' and calls animation unless not needed
        */
       _onIronSelectItem(event) {
-        console.log('_onIronSelectItem was called!!!');
-        
         _animateOnIronSelect(this, event);
       }
 
@@ -159,7 +154,6 @@
           return;
         }
         this._lastIndex = this.indexOf(event.detail.item);
-        console.log('_onIronDeselectItem', this._lastIndex);
       }
       
       _pageTransitionEndHandler(event) {
