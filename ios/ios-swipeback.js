@@ -23,7 +23,7 @@ function _onTrack(self, event) {
  *  Detects track.state = start. tracking is triggered by this method
  */
 function _trackStart(self, trackData) {
-  if (history.length == 0) {
+  if (self.navigationHistory.length == 0) {
     self._swipeStarted = false;
     return;
   }
