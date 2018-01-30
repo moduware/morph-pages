@@ -155,18 +155,6 @@
         }
         this._lastIndex = this.indexOf(event.detail.item);
       }
-      
-      _pageTransitionEndHandler(event) {
-        this.removeAttribute('style');
-      }
-
-      /**
-       * translate current page and previous page
-       */
-      _animatePages(x) {
-        this.translate3d(x + 'px', '0px', '0px', this._currentPageElement);
-        this.translate3d(`${x * 0.2}` + 'px', '0px', '0px', this._previousPageElement);
-      }
 
       /**
        * Change this.selected to what is the current value of page

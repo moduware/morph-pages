@@ -32,7 +32,7 @@ function _trackStart(self, trackData) {
   this._setUpSwipePages(self);
 
   // Translate current page and previous page using trackDate.dx
-  self._animatePages(trackData.dx);
+  _animatePages(self, trackData.dx);
 
   // Prevent regular touchmove event (disables vertical scroll) the other half which removes this is in the _trackEnd()
   //TODO: window.addEventListener('touchmove', this._preventTouchMove);
@@ -43,7 +43,7 @@ function _trackStart(self, trackData) {
  */
 function _trackMove(self, trackData) {
   // Translate current page and previous page using trackDate.dx
-  self._animatePages(trackData.dx);
+  _animatePages(self, trackData.dx);
 }
 
 /**
@@ -56,15 +56,15 @@ function _trackEnd(self, trackData) {
 
   // set up current and previous pages and set listener for 'transitionend'
   self._currentPageElement.style.transition = this._computeTransition(self, 1);
-  self._currentPageElement.addEventListener('transitionend', self._pageTransitionEndHandler);
+  self._currentPageElement.addEventListener('transitionend', _pageTransitionEndHandler);
   self._previousPageElement.style.transition = this._computeTransition(self, 1);
-  self._previousPageElement.addEventListener('transitionend', self._pageTransitionEndHandler);
+  self._previousPageElement.addEventListener('transitionend', _pageTransitionEndHandler);
 
   // The element is swipe away when swiping get passed the threshold
   self._completeSwipe = Math.abs(trackData.dx) > this._getOffsetWidth(self) * self.threshold;
   if (self._completeSwipe) {
     // trigger the animation in the right direction
-    self._animatePages(this._getOffsetWidth(self));
+    _animatePages(self, this._getOffsetWidth(self));
 
     // remove the last element of navigationHistory when swipe is complete
     self.navigationHistory.pop();
@@ -72,11 +72,19 @@ function _trackEnd(self, trackData) {
     history.back();
   } else {
     // swipe not long enough so go back to current page
-    self._animatePages(0);
+    _animatePages(self, 0);
   }
 
   // enable regular touchmove event ( enables vertical scroll again)
   // window.removeEventListener('touchmove', this._preventTouchMove);
+}
+
+/**
+ * translate current page and previous page
+ */
+function _animatePages(self, x) {
+  self.translate3d(x + 'px', '0px', '0px', self._currentPageElement);
+  self.translate3d(`${x * 0.2}` + 'px', '0px', '0px', self._previousPageElement);
 }
 
 /**
@@ -147,4 +155,8 @@ function _computeTransition(self, factor) {
 function _getOffsetWidth(self) {
   self._offsetWidth = self.offsetWidth;
   return self._offsetWidth;
+}
+
+function _pageTransitionEndHandler(event) {
+  this.removeAttribute('style');
 }
