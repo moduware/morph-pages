@@ -160,13 +160,6 @@
         this._lastIndex = this.indexOf(event.detail.item);
       }
 
-      /**
-       * Change this.selected to what is the current value of page
-       */
-      _selectPage(page, direction) {
-        this.selected = this._valueForItem(page);
-      }
-
     }
 
     window.customElements.define(MorphPages.is, MorphPages);

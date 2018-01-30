@@ -46,6 +46,13 @@ function goToLink(self, page) {
 }
 
 function _animationCompleted(self, page) {
-  self._selectPage(page);
+  _selectPage(self, page);
   self._animationComplete = false;
+}
+
+/**
+ * Change this.selected to what is the current value of page
+ */
+function _selectPage(self, page, direction) {
+  self.selected = self._valueForItem(page);
 }
