@@ -10,6 +10,7 @@ function _animateOnIronSelect(self, event) {
     return;
   }
 
+  // 
   if (self._lastIndex == undefined) {
     return;
   }
@@ -29,21 +30,18 @@ function _animateOnIronSelect(self, event) {
     const targetItemIndex = self.indexOf(event.detail.item);
     const value = self._indexToValue(targetItemIndex);
     const page = self._valueToItem(value);
-    this.goToLink(self, page);
+    goToLink(self, page);
   }
 }
 
 function goToLink(self, page) {
   const direction = self.pageChangeAnimationDirection; //'forward';
+  
+  let lastItemValue = self._indexToValue(self._lastIndex);
   // saving our current page to history
-  let lastItemValue = self._indexToValue(self._lastIndex);
   self.push('navigationHistory', lastItemValue);
-  this.changePageByLink(self, page, direction);
-}
-
-function changePageByLink(self, page, direction) {
+  
   let animation;
-  let lastItemValue = self._indexToValue(self._lastIndex);
   if (self.platform == 'android') {
     animation = androidAnimation(self, self._valueToItem(lastItemValue), page, direction);
   } else if (self.platform == 'ios') {
@@ -56,6 +54,4 @@ function changePageByLink(self, page, direction) {
 function _animationCompleted(self, page) {
   self._selectPage(page);
   self._animationComplete = false;
-  // update userSelected property so selectNext and selectPrevious works
-  self.userSelected = self._valueToIndex(self.selected);
 }

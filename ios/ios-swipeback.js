@@ -23,7 +23,7 @@ function _onTrack(self, event) {
  *  Detects track.state = start. tracking is triggered by this method
  */
 function _trackStart(self, trackData) {
-  if (self.navigationHistory.length == 0) {
+  if (history.length == 0) {
     self._swipeStarted = false;
     return;
   }
@@ -63,15 +63,13 @@ function _trackEnd(self, trackData) {
   // The element is swipe away when swiping get passed the threshold
   self._completeSwipe = Math.abs(trackData.dx) > this._getOffsetWidth(self) * self.threshold;
   if (self._completeSwipe) {
-    // update selected
-    self._selectPage(self._leftCandidate);
     // trigger the animation in the right direction
     self._animatePages(this._getOffsetWidth(self));
 
-    // update userSelected property so selectNext and selectPrevious works
-    self.userSelected = self._valueToIndex(self.selected);
     // remove the last element of navigationHistory when swipe is complete
     self.navigationHistory.pop();
+    // changing current item by going back in history
+    history.back();
   } else {
     // swipe not long enough so go back to current page
     self._animatePages(0);

@@ -57,11 +57,6 @@
             type: Boolean
           },
 
-          userSelected: {
-            type: Number,
-            value: 0
-          },
-
           /**
           *  Value used to decide if page get swipe or not
           */
@@ -137,57 +132,6 @@
         this.removeEventListener('iron-select', this._onIronSelectItem);
       }
 
-      /**
-      * This method to select previous page with animation
-      */
-      selectNext() {
-        if (this.animationInProgress == true) return;
-        const next = ++this.userSelected % this.items.length;
-        const value = this._indexToValue(next);
-        const page = this._valueToItem(value);
-        this.goToPage(page);
-      }
-
-      /**
-      * This method to select next page with animation
-      */
-      selectPrevious() {
-        if (this.animationInProgress == true) return;
-        this.userSelected--;
-        if (this.userSelected < 0) this.userSelected = this.items.length - 1;
-        const prev = this.userSelected % this.items.length;
-        const value = this._indexToValue(prev);
-        const page = this._valueToItem(value);
-        this.returnToPage(page);
-      }
-
-      goToPage(page) {
-        const direction = 'forward';
-        // saving our current page to history
-        this.push('navigationHistory', this.selected);
-        this.changePage(page, direction);
-      }
-      
-      returnToPage(page) {
-        const direction = 'backward';
-        let lastPageNavigationHistory = this._valueToItem(this.navigationHistory[this.navigationHistory.length - 1]);
-
-        if (page == lastPageNavigationHistory) this.navigationHistory.pop(); // if last page in history is equal to current page then pop();
-        this.changePage(page, direction);
-      }
-
-      changePage(page, direction) {
-        let animation;
-
-        if(this.platform == 'android') {
-          animation = androidAnimation(this, this._valueToItem(this.selected), page, direction);  
-        } else if(this.platform == 'ios') {
-          animation = iosAnimation(this, this._valueToItem(this.selected), page, direction);
-        }
-
-        animation.then(() => this._selectPage(page));
-      }
-
       animationEnd(props) {
         props.nextPage.removeAttribute('style');
         props.currentPage.removeAttribute('style');
@@ -235,7 +179,7 @@
       /**
        * Change this.selected to what is the current value of page
        */
-      _selectPage(page) {
+      _selectPage(page, direction) {
         this.selected = this._valueForItem(page);
       }
 

@@ -86,7 +86,6 @@
             <app-toolbar class="header-container">
               <paper-icon-button icon="arrow-back" onclick="previousPage()"></paper-icon-button>
               <div main-title>morph-pages</div>
-              <paper-icon-button icon="arrow-forward" onclick="nextPage()"></paper-icon-button>
             </app-toolbar>
             <div class="links">
               <a href="#one">One</a>
@@ -113,16 +112,7 @@
               * move to previous page
               */
               previousPage = function() {
-                var pages = document.querySelector('morph-pages');
-                pages.selectPrevious();
-              };
-
-              /**
-              * move to next page
-              */ 
-              nextPage = function() {
-                var pages = document.querySelector('morph-pages');
-                pages.selectNext();
+                history.back();
               };
 
               // add paragraph text to all pages
