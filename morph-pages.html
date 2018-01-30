@@ -27,10 +27,6 @@
       :host > ::slotted(:not(slot).iron-selected) {
         z-index: 1;
       }
-
-      :host > ::content > :not(.iron-selected):not(.iron-swiping) {
-        /* left: -100% !important; */
-      }
     </style>
 
   </template>
@@ -73,11 +69,13 @@
             value: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
           },
 
+          /** Array of previous pages location hash or value */
           navigationHistory: {
             type: Array,
             value: () => []
           },
 
+          /** Page animation direction setter that links wiht morph-location's last-navigation-direction */
           pageChangeAnimationDirection: {
             type: String,
             value: 'forward'
@@ -166,7 +164,6 @@
       
       _pageTransitionEndHandler(event) {
         this.removeAttribute('style');
-        this.classList.remove('iron-swiping');
         this.transitionRunning = false;
       }
 
