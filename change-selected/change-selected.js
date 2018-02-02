@@ -29,11 +29,15 @@ function _animateOnIronSelect(self, event) {
 }
 
 function goToLink(self, page) {
-  const direction = self.pageChangeAnimationDirection; //'forward';
+  const direction = self.pageChangeAnimationDirection;
   
   let lastItemValue = self._indexToValue(self._lastIndex);
-  // saving our current page to history
-  self.push('navigationHistory', lastItemValue);
+  // saving our current page to history if coming from tab changes / animation direction forward
+  if (direction == 'forward') {
+    self.push('navigationHistory', lastItemValue);
+  } else {
+    self.pop('navigationHistory');
+  }
   
   let animation;
   if (self.platform == 'android') {
@@ -56,3 +60,9 @@ function _animationCompleted(self, page) {
 function _selectPage(self, page, direction) {
   self.selected = self._valueForItem(page);
 }
+
+
+// NOTE: 
+// window.onhashchange = function () {
+//   console.log('hash changed triggered');
+// };
