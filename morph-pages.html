@@ -123,7 +123,9 @@
 
       disconnectedCallback() {
         super.disconnectedCallback();
+        // Removes events listener 
         this.removeEventListener('iron-select', this._onIronSelectItem);
+        this.removeEventListener('iron-deselect', this._onIronDeselectItem);
       }
 
       /**
