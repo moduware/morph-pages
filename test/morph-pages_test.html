@@ -36,6 +36,17 @@
       </template>
     </test-fixture>
 
+    <test-fixture id="attribute">
+      <template>
+        <morph-pages selected="one" platform="ios" attr-for-selected="name">
+          <div name="one" id="page0">Page 0</div>
+          <div name="two" id="page1">Page 1</div>
+          <div name="three" id="page2">Page 2</div>
+          <div name="four" id="page3">Page 3</div>
+        </morph-pages>
+      </template>
+    </test-fixture>
+
     <script>
       describe('morph-pages', () => {
         let pages;
@@ -149,6 +160,23 @@
             expect(pages.navigationHistory.length).to.be.equal(3);
           });
         });
+
+        describe('attribute name selection', () => {
+          beforeEach(function (done) {
+            pages = fixture('attribute');
+            // to make sure iron-items is visible before running test
+            pages.addEventListener('iron-items-changed', function onIronItemsChanged() {
+              pages.removeEventListener('iron-items-changed', onIronItemsChanged);
+              done();
+            });
+          });
+
+          it('should have selected item = "one" ', () => {
+            expect(pages.selectedItem).to.be.equal(pages.items[0]);
+          });
+        });
+
+
 
         // NOTES: How to get to the elements inside shadow dom
 
