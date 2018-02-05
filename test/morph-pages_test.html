@@ -38,7 +38,7 @@
 
     <test-fixture id="attribute">
       <template>
-        <morph-pages selected="one" platform="ios" attr-for-selected="name">
+        <morph-pages selected="two" platform="ios" attr-for-selected="name">
           <div name="one" id="page0">Page 0</div>
           <div name="two" id="page1">Page 1</div>
           <div name="three" id="page2">Page 2</div>
@@ -171,8 +171,8 @@
             });
           });
 
-          it('should have selected item = "one" ', () => {
-            expect(pages.selectedItem).to.be.equal(pages.items[0]);
+          it('should have selected item = "two" ', () => {
+            expect(pages.selectedItem).to.be.equal(pages.items[1]);
           });
         });
 
