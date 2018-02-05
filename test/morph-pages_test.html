@@ -115,7 +115,7 @@
               done();
             });
           });
-
+          
           it('should have selected value change from 0 to 1', function() {
             expect(pages.selected).to.be.equal('1');
           });
@@ -128,7 +128,26 @@
             expect(getComputedStyle(pages.selectedItem).zIndex).to.be.equal('2');
           });
 
+          
+        });
 
+        describe('navigatioin history', () => {
+          beforeEach(function (done) {
+            pages = fixture('selected');
+            // to make sure iron-items is visible before running test
+            pages.addEventListener('iron-items-changed', function onIronItemsChanged() {
+              pages.removeEventListener('iron-items-changed', onIronItemsChanged);
+
+              pages.selected = '3';
+              pages.selected = '2';
+              pages.selected = '1';
+              done();
+            });
+          });
+
+          it('should add every time there is new selected item', () => {
+            expect(pages.navigationHistory.length).to.be.equal(3);
+          });
         });
 
         // NOTES: How to get to the elements inside shadow dom
