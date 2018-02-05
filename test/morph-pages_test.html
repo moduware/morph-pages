@@ -170,9 +170,14 @@
               done();
             });
           });
-
+          
           it('should have selected item = "two" ', () => {
             expect(pages.selectedItem).to.be.equal(pages.items[1]);
+          });
+
+          it('should change selected item = "four" and item index to 3', () => {
+            pages.selected = 'four';
+            expect(pages.selectedItem).to.be.equal(pages.items[3]);
           });
         });
 
