@@ -8,6 +8,7 @@
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="../scripts.html">
 
     <link rel="import" href="../morph-pages.html">
   </head>
@@ -26,7 +27,7 @@
 
     <test-fixture id="selected">
       <template>
-        <morph-pages selected="0">
+        <morph-pages selected="0" platform="ios">
           <div id="page0">Page 0</div>
           <div id="page1">Page 1</div>
           <div id="page2">Page 2</div>
@@ -123,17 +124,14 @@
             expect(pages.selectedItem).to.be.equal(pages.items[1]);
           });
 
-          it('should have the new selected item z-index:1 and all others are z-index:0', function () {
-            pages.items.forEach(function (page) {
-              // new selected pages have z-index: 1 and all the rest should have z-index: 0
-              expect(getComputedStyle(page).zIndex).to.be.equal(page == pages.selectedItem ? '1' : '0');
-            });
+          it('should have the new selected item z-index:2', function () {
+            expect(getComputedStyle(pages.selectedItem).zIndex).to.be.equal('2');
           });
 
 
         });
 
-        // NOTES:
+        // NOTES: How to get to the elements inside shadow dom
 
         // const elementShadowRoot = element.shadowRoot;
         // const elementHeader = elementShadowRoot.querySelector('h2');
