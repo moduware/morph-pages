@@ -88,8 +88,6 @@ function _animatePages(self, x) {
 }
 
 function _preventTouchMove (event) {
-  console.log('event', event);
-  
   return event && event.preventDefault();
 }
 
