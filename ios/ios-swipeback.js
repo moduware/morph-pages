@@ -35,7 +35,7 @@ function _trackStart(self, trackData) {
   _animatePages(self, trackData.dx);
 
   // Prevent regular touchmove event (disables vertical scroll) the other half which removes this is in the _trackEnd()
-  //TODO: window.addEventListener('touchmove', this._preventTouchMove);
+  window.addEventListener('touchmove', this._preventTouchMove);
 }
 
 /** 
@@ -76,7 +76,7 @@ function _trackEnd(self, trackData) {
   }
 
   // enable regular touchmove event ( enables vertical scroll again)
-  // window.removeEventListener('touchmove', this._preventTouchMove);
+  window.removeEventListener('touchmove', this._preventTouchMove);
 }
 
 /**
@@ -85,6 +85,12 @@ function _trackEnd(self, trackData) {
 function _animatePages(self, x) {
   self.translate3d(x + 'px', '0px', '0px', self._currentPageElement);
   self.translate3d(`${x * 0.2}` + 'px', '0px', '0px', self._previousPageElement);
+}
+
+function _preventTouchMove (event) {
+  console.log('event', event);
+  
+  return event && event.preventDefault();
 }
 
 /**
