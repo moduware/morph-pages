@@ -3,71 +3,6 @@
 
 <dom-module id="morph-location">
   <script>
-
-    var detectBackOrForward = function(onBack, onForward) {
-      locationHistory = [window.location.href];
-      historyLength = window.history.length;
-      historyPosition = 0;
-
-      return function(replace) {
-        replace = replace || false;
-        var newLocation = window.location.href, newHistoryLength = window.history.length;
-
-        if(replace) {
-          locationHistory[historyPosition] = newLocation;
-        } else if (locationHistory.length && historyLength == newHistoryLength) {
-          var previousLocation = locationHistory[historyPosition - 1];
-          if (previousLocation == newLocation) {
-            //locationHistory = locationHistory.slice(0, -1);
-            historyPosition--;
-            onBack();
-          } else {
-            historyPosition++;
-            //locationHistory.push(newLocation);
-            onForward();
-          }
-        } else {
-          historyPosition++;
-          locationHistory = locationHistory.slice(0, historyPosition);
-          locationHistory.push(newLocation);
-          historyLength = newHistoryLength;
-        }
-        console.log('historyLength', historyLength);
-        console.log('historyPosition', historyPosition);
-      }
-    };
-
-    // window.addEventListener('hashchange', detectBackOrForward(
-    //   function() { console.log('back') },
-    //   function() { console.log('forward') }
-    // ));
-
-    var historyHandler = detectBackOrForward(
-      () => console.log('backward'),
-      () => console.log('forward')
-    );
-
-    window.addEventListener('popstate', (event) => {
-      historyHandler();
-      console.log('popState', window.location.href);
-    });
-
-    const _historyReplaceState = history.replaceState;
-    history.replaceState = function(state) {
-      //console.log(state);
-      _historyReplaceState.call(this, ...arguments);
-      historyHandler(true);
-      console.log('replaceState', window.location.href);
-    };
-
-    const _historyPushState = history.pushState;
-    history.pushState = function(state) {
-      //console.log(state);
-      _historyPushState.call(this, ...arguments);
-      historyHandler();
-      console.log('pushState', window.location.href);
-    };
-
     const IronLocationSuperClass = customElements.get('iron-location');
 
     class MorphLocation extends MorphElement(IronLocationSuperClass) {
@@ -117,6 +52,63 @@
         window.removeEventListener('popstate', this._statePopHandler);
       }
     }
+
+    var detectBackOrForward = function (onBack, onForward) {
+      locationHistory = [window.location.href];
+      historyLength = window.history.length;
+      historyPosition = 0;
+
+      return function (replace) {
+        replace = replace || false;
+        var newLocation = window.location.href, newHistoryLength = window.history.length;
+
+        if (replace) {
+          locationHistory[historyPosition] = newLocation;
+        } else if (locationHistory.length && historyLength == newHistoryLength) {
+          var previousLocation = locationHistory[historyPosition - 1];
+          if (previousLocation == newLocation) {
+            historyPosition--;
+            onBack();
+          } else {
+            historyPosition++;
+            onForward();
+          }
+        } else {
+          historyPosition++;
+          locationHistory = locationHistory.slice(0, historyPosition);
+          locationHistory.push(newLocation);
+          historyLength = newHistoryLength;
+        }
+        console.log('historyLength', historyLength);
+        console.log('historyPosition', historyPosition);
+      }
+    };
+
+    var historyHandler = detectBackOrForward(
+      () => console.log('backward'),
+      () => console.log('forward')
+    );
+
+    window.addEventListener('popstate', (event) => {
+      historyHandler();
+      console.log('popState', window.location.href);
+    });
+
+    const _historyReplaceState = history.replaceState;
+    history.replaceState = function (state) {
+      //console.log(state);
+      _historyReplaceState.call(this, ...arguments);
+      historyHandler(true);
+      console.log('replaceState', window.location.href);
+    };
+
+    const _historyPushState = history.pushState;
+    history.pushState = function (state) {
+      //console.log(state);
+      _historyPushState.call(this, ...arguments);
+      historyHandler();
+      console.log('pushState', window.location.href);
+    };
 
     window.customElements.define(MorphLocation.is, MorphLocation);
   </script>
