@@ -4,6 +4,7 @@
 <dom-module id="morph-location">
   <script>
     const IronLocationSuperClass = customElements.get('iron-location');
+    let that;
 
     class MorphLocation extends MorphElement(IronLocationSuperClass) {
       static get is() { return 'morph-location'; }
@@ -20,21 +21,7 @@
       }
 
       constructor() {
-        let _locationChangeHandler = () => {
-          this.set('lastNavigationDirection', 'forward');
-        };
-
-        let _statePopHandler = () => {
-          this.set('lastNavigationDirection', 'backward');
-        };
-
-        window.addEventListener('hashchange', _locationChangeHandler);
-        window.addEventListener('popstate', _statePopHandler);
-
         super();
-
-        this._locationChangeHandler = _locationChangeHandler;
-        this._statePopHandler = _statePopHandler;
       }
 
       ready() {
@@ -43,6 +30,7 @@
 
       connectedCallback() {
         super.connectedCallback();
+        that = this;
       }
 
       disconnectedCallback() {
@@ -84,10 +72,17 @@
       }
     };
 
-    var historyHandler = detectBackOrForward(
-      () => console.log('backward'),
-      () => console.log('forward')
-    );
+    var historyHandler = detectBackOrForward(_goBackward, _goForward);
+
+    function _goBackward() {
+      console.log('backward');
+      that.set('lastNavigationDirection', 'backward');
+    }
+
+    function _goForward() {
+      console.log('forward');
+      that.set('lastNavigationDirection', 'forward');
+    }
 
     window.addEventListener('popstate', (event) => {
       historyHandler();
