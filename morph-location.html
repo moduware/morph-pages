@@ -41,6 +41,9 @@
       }
     }
 
+    /**
+     *  Detects between browser back and browser forward clicks
+     */
     var detectBackOrForward = function (onBack, onForward) {
       locationHistory = [window.location.href];
       historyLength = window.history.length;
@@ -74,22 +77,36 @@
 
     var historyHandler = detectBackOrForward(_goBackward, _goForward);
 
+    /**
+     * Sets lastNavigationDirection to backward
+     */
     function _goBackward() {
       console.log('backward');
       that.set('lastNavigationDirection', 'backward');
     }
 
+    /**
+     * Sets lastNavigationDirection to forward
+     */
     function _goForward() {
       console.log('forward');
       that.set('lastNavigationDirection', 'forward');
     }
 
+    /**
+     * Listen to popstate events
+     */
     window.addEventListener('popstate', (event) => {
       historyHandler();
       console.log('popState', window.location.href);
     });
 
+    /* reassigns history.replaceState */
     const _historyReplaceState = history.replaceState;
+
+    /**
+     * Calls historyHandler() everytiime history.replaceState() is called
+     */
     history.replaceState = function (state) {
       //console.log(state);
       _historyReplaceState.call(this, ...arguments);
@@ -97,9 +114,13 @@
       console.log('replaceState', window.location.href);
     };
 
+    /* reassigns history.pushState */
     const _historyPushState = history.pushState;
+
+    /**
+     * Calls historyHandler() everytiime history.pushState() is called
+     */
     history.pushState = function (state) {
-      //console.log(state);
       _historyPushState.call(this, ...arguments);
       historyHandler();
       console.log('pushState', window.location.href);
