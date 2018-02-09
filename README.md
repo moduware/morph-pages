@@ -8,6 +8,18 @@ For the information about how to clone the desired repository, running the local
 
 // TODO: Add quick demo of the morph-pages with gif or screen shot
 
+- Here is a quick demo of `<morph-pages>`
+
+  <p>On IOS platform;</p>
+
+<p align="center">
+  <img src="demo-images/morph-pages-ios-demo.gif" alt="Morph Pages element" />
+
+  <p>On Android platform;</p>
+
+<p align="center">
+  <img src="demo-images/morph-pages-android-demo.gif" alt="Morph Pages element" />
+
 ## Styling
 
   // TODO: Find all custom CSS for morph-pages and put it here with description
