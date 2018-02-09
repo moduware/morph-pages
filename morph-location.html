@@ -75,6 +75,9 @@
       }
     };
 
+    /**
+     * Call detectBackOrForward with two functions params
+     */
     var historyHandler = detectBackOrForward(_goBackward, _goForward);
 
     /**
@@ -97,21 +100,21 @@
      * Listen to popstate events
      */
     window.addEventListener('popstate', (event) => {
-      historyHandler();
       console.log('popState', window.location.href);
+      historyHandler();
     });
 
     /* reassigns history.replaceState */
     const _historyReplaceState = history.replaceState;
 
     /**
-     * Calls historyHandler() everytiime history.replaceState() is called
+     * Calls historyHandler() everytime history.replaceState() is called
      */
     history.replaceState = function (state) {
       //console.log(state);
       _historyReplaceState.call(this, ...arguments);
-      historyHandler(true);
       console.log('replaceState', window.location.href);
+      historyHandler(true);
     };
 
     /* reassigns history.pushState */
@@ -122,8 +125,8 @@
      */
     history.pushState = function (state) {
       _historyPushState.call(this, ...arguments);
-      historyHandler();
       console.log('pushState', window.location.href);
+      historyHandler();
     };
 
     window.customElements.define(MorphLocation.is, MorphLocation);
