@@ -6,20 +6,25 @@ For the information about how to clone the desired repository, running the local
 
 ## Demo
 
-// TODO: Add quick demo of the morph-pages with gif or screen shot
-
 - Here is a quick demo of `<morph-pages>`
 
   <p>On IOS platform:</p>
 
-<p align="center">
-  <img src="demo-images/morph-pages-ios-demo.gif" alt="Morph Pages element" />
+  <p align="center">
+    <img src="demo-images/morph-pages-ios-demo.gif" alt="Morph Pages element" />
+  </p>
 
   <p>On Android platform:</p>
 
-<p align="center">
-  <img src="demo-images/morph-pages-android-demo.gif" alt="Morph Pages element" />
+  <p align="center">
+    <img src="demo-images/morph-pages-android-demo.gif" alt="Morph Pages element" />
+  </p>
 
+  <p>SWIPEBACK On IOS platform:</p>
+
+  <p align="center">
+    <img src="demo-images/morph-pages-ios-swipeback-demo.gif" alt="Morph Pages element" />
+  </p>
 ## Attributes
 
   | Custom Attribute |   Type  | Description                                                                                                                      | Default     |
