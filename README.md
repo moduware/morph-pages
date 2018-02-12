@@ -37,9 +37,24 @@ For the information about how to clone the desired repository, running the local
 
 ## How to use our **`<morph-pages>`** component
 
-- Example html markup for morph-pages using app-toolbar and morph-location
+- `morph-pages` is used to select one of its children to show just like iron-pages. One use is to cycle through a list of its 'pages' or 'children'.
 
-// TODO: Add description on how to use morph-pages. Sample markup
+```html
+  <morph-pages selected="0">
+    <div>One</div>
+    <div>Two</div>
+    <div>Three</div>
+  </morph-pages>
+
+  <script>
+    document.addEventListener('click', function(e) {
+      var pages = document.querySelector('morph-pages');
+      pages.selectNext();
+    });
+  </script>
+```
+
+- Example html markup for morph-pages using app-toolbar and morph-location
 
 ```html
 
@@ -79,3 +94,4 @@ For the information about how to clone the desired repository, running the local
 
 ```
 
+- morph-pages inherited from iron-pages and is backwards compatible. For more detailed documentation on how to use iron-pages go [here](https://www.webcomponents.org/element/PolymerElements/iron-pages/elements/iron-pages).
