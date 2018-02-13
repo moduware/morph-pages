@@ -69,6 +69,7 @@
           locationHistory = locationHistory.slice(0, historyPosition);
           locationHistory.push(newLocation);
           historyLength = newHistoryLength;
+          onForward();
         }
         console.log('historyLength', historyLength);
         console.log('historyPosition', historyPosition);
