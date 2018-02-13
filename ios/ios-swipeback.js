@@ -8,10 +8,15 @@ function _onTrack(self, event) {
     return;
   }
 
+  let props = {
+    shadowElement: createShadowElem(),
+    overlayElement: createOverlayElement()
+  };
+
   // this is checking for track.state == equal and swipe is left to right
   if (track.state === 'start' && Math.abs(track.dy) < Math.abs(track.dx)) {
     self._swipeStarted = true;
-    this._trackStart(self, track);
+    this._trackStart(self, track, props);
   } else if (track.state == 'track' && self._swipeStarted) {
     this._trackMove(self, track);
   } else if (track.state == 'end' && self._swipeStarted) {
@@ -22,15 +27,14 @@ function _onTrack(self, event) {
 /**
  *  Detects track.state = start. tracking is triggered by this method
  */
-function _trackStart(self, trackData) {
+function _trackStart(self, trackData, props) {
   if (self.navigationHistory.length == 0) {
     self._swipeStarted = false;
     return;
   }
 
   // set up the pages to animate
-  this._setUpSwipePages(self);
-
+  this._setUpSwipePages(self, props);
   // Translate current page and previous page using trackDate.dx
   _animatePages(self, trackData.dx);
 
@@ -42,6 +46,13 @@ function _trackStart(self, trackData) {
  *  Gets all data event.details as long as track.state = 'track'. 
  */
 function _trackMove(self, trackData) {
+  let shadow = Polymer.dom(this.root).querySelector('#shadow');
+  let overlay = Polymer.dom(this.root).querySelector('#overlay');
+  let opacity = 1 - trackData.dx / 360;
+  shadow.style.opacity = opacity;
+  overlay.style.opacity = opacity;
+  console.log('elem', overlay);
+
   // Translate current page and previous page using trackDate.dx
   _animatePages(self, trackData.dx);
 }
@@ -65,7 +76,10 @@ function _trackEnd(self, trackData) {
   if (self._completeSwipe) {
     // trigger the animation in the right direction
     _animatePages(self, this._getOffsetWidth(self));
-
+    let shadow = Polymer.dom(this.root).querySelector('#shadow');
+    let overlay = Polymer.dom(this.root).querySelector('#overlay');
+    shadow.style.opacity = 0;
+    overlay.style.opacity = 0;
     // remove the last element of navigationHistory when swipe is complete
     self.navigationHistory.pop();
     // changing current item by going back in history
@@ -95,12 +109,13 @@ function _preventTouchMove (event) {
  *  Sets selected page and previous page style ready for animation
  * @param {*} self 
  */
-function _setUpSwipePages(self) {
+function _setUpSwipePages(self, props) {
   // reset the animated current and previous page
   self._currentPageElement = null;
   self._previousPageElement = null;
+  
   // selected page
-  this._initCurrentPage(self, self.selectedItem, 0);
+  this._initCurrentPage(self, self.selectedItem, 0, props);
 
   // gets the last element of navigationHistory and assigns to previous page
   var value = self.navigationHistory[self.navigationHistory.length - 1];
@@ -109,7 +124,7 @@ function _setUpSwipePages(self) {
   self._leftCandidate = page;
   self._leftCandidate.style.zIndex = 2;
   self.selectedItem.style.zIndex = 3;
-  this._initPreviousPage(self, self._leftCandidate, -this._getOffsetWidth(self));
+  this._initPreviousPage(self, self._leftCandidate, -this._getOffsetWidth(self), props);
 }
 
 // initPage - set up page for animatioin
@@ -119,7 +134,7 @@ function _setUpSwipePages(self) {
  * @param {*} page 
  * @param {*} left 
  */
-function _initCurrentPage(self, page, left) {
+function _initCurrentPage(self, page, left, props) {
   if (page == null) {
     return;
   }
@@ -127,6 +142,10 @@ function _initCurrentPage(self, page, left) {
   page.style.transition = `none`;
 
   self._currentPageElement = page;
+  // create shadow element in current page, with opacity 1
+  props.shadowElement.style.opacity = 1;
+  props.shadowElement.setAttribute('id', 'shadow');
+  self._currentPageElement.insertAdjacentElement('afterbegin', props.shadowElement);
 }
 
 /**
@@ -135,7 +154,7 @@ function _initCurrentPage(self, page, left) {
  * @param {*} page 
  * @param {*} left 
  */
-function _initPreviousPage(self, page, left) {
+function _initPreviousPage(self, page, left, props) {
   if (page == null) {
     return;
   }
@@ -143,6 +162,10 @@ function _initPreviousPage(self, page, left) {
   page.style.transition = `none`;
 
   self._previousPageElement = page;
+  // create overlay element for next page with opacity 1
+  props.overlayElement.style.opacity = 1;
+  props.overlayElement.setAttribute('id', 'overlay');
+  self._previousPageElement.insertAdjacentElement('afterbegin', props.overlayElement);
 }
 
 /**
@@ -163,4 +186,8 @@ function _getOffsetWidth(self) {
 
 function _pageTransitionEndHandler(event) {
   this.removeAttribute('style');
+  let shadow = Polymer.dom(this.root).querySelector('#shadow');
+  let overlay = Polymer.dom(this.root).querySelector('#overlay');
+  shadow.parentNode.removeChild(shadow);
+  overlay.parentNode.removeChild(overlay);
 }
