@@ -1,6 +1,5 @@
-// onIronSelectItem
 /**
- * 
+ * Animate pages when 'iron-select' fires
  * @param {*} self 
  * @param {*} event 
  */
@@ -28,6 +27,11 @@ function _animateOnIronSelect(self, event) {
   }
 }
 
+/**
+ * Sets direction forward or backwards and also set the animation either android or ios
+ * @param {*} self 
+ * @param {Object} page - current page to animate
+ */
 function goToLink(self, page) {
   const direction = self.pageChangeAnimationDirection;
   
@@ -60,9 +64,3 @@ function _animationCompleted(self, page) {
 function _selectPage(self, page, direction) {
   self.selected = self._valueForItem(page);
 }
-
-
-// NOTE: 
-// window.onhashchange = function () {
-//   console.log('hash changed triggered');
-// };

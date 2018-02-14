@@ -1,3 +1,10 @@
+/**
+ * The entry point method for ios animation using requestAnimationFrame
+ * @param {*} self 
+ * @param {*} currentPage - The current page to be animated
+ * @param {*} nextPage - The next page to be animated
+ * @param {String} direction - The direction of the animation
+ */
 function iosAnimation(self, currentPage, nextPage, direction) {
   return new Promise((resolve, reject) => {
     self.animationInProgress = true;
@@ -39,6 +46,10 @@ function iosAnimation(self, currentPage, nextPage, direction) {
   });
 }
 
+/**
+ * Sets the state of current page and next page for forward animation
+ * @param {Object} props - contains the data for passing states between functions
+ */
 function setIosForwardAnimationInitialState(props) {
   // create shadow element in next page, with opacity 0
   props.shadowElement.style.opacity = 0;
@@ -59,6 +70,10 @@ function setIosForwardAnimationInitialState(props) {
   props.nextPage.style.transform = `translate3d(${props.nextPageOffset}%,0,0)`;
 }
 
+/** 
+ * Sets the state of current page and next page for forward animation 
+ * @param {Object} props - contains the data for passing states between functions
+ */
 function setIosBackwardAnimationInitialState(props) {
   // create shadow element in current page, with opacity 1
   props.shadowElement.style.opacity = 1;
@@ -77,6 +92,7 @@ function setIosBackwardAnimationInitialState(props) {
   props.nextPage.style.transform = `translate3d(${props.pageOffsetLeftMax}%,0,0)`;
 }
 
+/** creates a shadow element during animation */
 function createShadowElem() {
   let shadowElement = document.createElement('div');
   shadowElement.style.background = `linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 10%, rgba(0,0,0,0.01) 50%, rgba(0,0,0,0.2) 100%)`;
@@ -89,6 +105,7 @@ function createShadowElem() {
   return shadowElement;
 }
 
+/** create a overlay element during animation */
 function createOverlayElement() {
   let overlayElement = document.createElement('div');
   overlayElement.style.width = `100%`;
@@ -100,6 +117,12 @@ function createOverlayElement() {
   return overlayElement;
 }
 
+/**
+ * Goes through the ios animation by moving forward the requestAnimationFrame
+ * @param {Object} props - contains data for passing states between functions
+ * @param {*} endCallback - callback function
+ * @param {double} timestamp - single argument from DOMHighResTimeStamp requestAnimationFrame
+ */
 function forwardIosAnimationStep(props, endCallback, timestamp) {
   if (props.start == -1) props.start = timestamp;
   const progress = timestamp - props.start;
@@ -132,6 +155,12 @@ function easeInOutQuad(t) {
   return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t
 }
 
+/**
+ * Goes through the ios animation by moving backward the requestAnimationFrame
+ * @param {Object} props - contains data for passing states between functions
+ * @param {*} endCallback - callback function
+ * @param {double} timestamp - single argument from DOMHighResTimeStamp requestAnimationFrame
+ */
 function backwardIosAnimationStep(props, endCallback, timestamp) {
   if (props.start == -1) props.start = timestamp;
   const progress = timestamp - props.start;

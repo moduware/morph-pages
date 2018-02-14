@@ -1,3 +1,10 @@
+/**
+ * The entry point method for android animation using requestAnimationFrame
+ * @param {*} self 
+ * @param {*} currentPage - The current page to be animated
+ * @param {*} nextPage - The next page to be animated
+ * @param {String} direction - The direction of the animation
+ */
 function androidAnimation(self, currentPage, nextPage, direction) {
   return new Promise((resolve, reject) => {
     self.animationInProgress = true;
@@ -31,6 +38,12 @@ function androidAnimation(self, currentPage, nextPage, direction) {
   });
 }
 
+/**
+ * Goes through the android animation by moving forward the requestAnimationFrame
+ * @param {Object} props - contains data for passing states between functions
+ * @param {*} endCallback - callback function
+ * @param {double} timestamp - single argument from DOMHighResTimeStamp requestAnimationFrame
+ */
 function forwardAndroidAnimationStep(props, endCallback, timestamp) {
   if (props.start == -1) props.start = timestamp;
   
@@ -49,6 +62,12 @@ function forwardAndroidAnimationStep(props, endCallback, timestamp) {
   }
 }
 
+/**
+ * Goes through the android animation by moving backward the requestAnimationFrame
+ * @param {Object} props - contains data for passing states between functions
+ * @param {*} endCallback - callback function
+ * @param {double} timestamp - single argument from DOMHighResTimeStamp requestAnimationFrame
+ */
 function backwardAndroidAnimationStep(props, endCallback, timestamp) {
   if (props.start == -1) props.start = timestamp;
 
