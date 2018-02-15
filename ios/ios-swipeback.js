@@ -51,7 +51,6 @@ function _trackMove(self, trackData) {
   let opacity = 1 - trackData.dx / 360;
   shadow.style.opacity = opacity;
   overlay.style.opacity = opacity;
-  console.log('elem', overlay);
 
   // Translate current page and previous page using trackDate.dx
   _animatePages(self, trackData.dx);
@@ -188,6 +187,6 @@ function _pageTransitionEndHandler(event) {
   this.removeAttribute('style');
   let shadow = Polymer.dom(this.root).querySelector('#shadow');
   let overlay = Polymer.dom(this.root).querySelector('#overlay');
-  shadow.parentNode.removeChild(shadow);
-  overlay.parentNode.removeChild(overlay);
+  if (shadow != null) shadow.parentNode.removeChild(shadow);
+  if (overlay != null) overlay.parentNode.removeChild(overlay);
 }
