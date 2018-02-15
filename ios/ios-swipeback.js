@@ -32,7 +32,6 @@ function _trackStart(self, trackData, props) {
     self._swipeStarted = false;
     return;
   }
-
   // set up the pages to animate
   this._setUpSwipePages(self, props);
   // Translate current page and previous page using trackDate.dx
@@ -49,8 +48,9 @@ function _trackMove(self, trackData) {
   let shadow = Polymer.dom(this.root).querySelector('#shadow');
   let overlay = Polymer.dom(this.root).querySelector('#overlay');
   let opacity = 1 - trackData.dx / 360;
-  shadow.style.opacity = opacity;
-  overlay.style.opacity = opacity;
+  
+  if (shadow != null) shadow.style.opacity = opacity;
+  if (overlay != null) overlay.style.opacity = opacity;
 
   // Translate current page and previous page using trackDate.dx
   _animatePages(self, trackData.dx);
@@ -77,8 +77,8 @@ function _trackEnd(self, trackData) {
     _animatePages(self, this._getOffsetWidth(self));
     let shadow = Polymer.dom(this.root).querySelector('#shadow');
     let overlay = Polymer.dom(this.root).querySelector('#overlay');
-    shadow.style.opacity = 0;
-    overlay.style.opacity = 0;
+    if (shadow != null) shadow.style.opacity = 0;
+    if (overlay != null) overlay.style.opacity = 0;
     // remove the last element of navigationHistory when swipe is complete
     self.navigationHistory.pop();
     // changing current item by going back in history
