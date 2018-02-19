@@ -8,14 +8,16 @@
   <template id="styles">
     <style>
       :host {
+        --host-page-display: block;
         position: relative;
-        display: block;
+        display: var(--host-page-display);
 
         --animation-duration: 250ms;
       }
 
       :host > ::slotted(:not(slot)) {
-        display: block !important;
+        --host-slotted-page-diplay: block;
+        display: var(--host-slotted-page-diplay) !important;
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
       }
