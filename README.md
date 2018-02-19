@@ -40,7 +40,7 @@ For the information about how to clone the desired repository, running the local
 Custom property                  | Description                               | Default
 ---------------------------------|-------------------------------------------|--------------------
 `--host-page-display`            | Display property of the morph pages       | `block`
-`--host-slotted-page-diplay`     | Display property of morph pages chilidren | `block`
+`--host-slotted-page-diplay`     | Display property of morph pages children  | `block`
 
 ## How to use our **`<morph-pages>`** component
 
