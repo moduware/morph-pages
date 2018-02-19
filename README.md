@@ -35,6 +35,13 @@ For the information about how to clone the desired repository, running the local
   |    **`navigationHistory`**   | Array | Array of previous pages location hash or value | **`() => []`**  |
   |    **`pageChangeAnimationDirection`**   | String | Page animation direction setter that links with morph-location's last-navigation-direction | **`forward`**  |
 
+## Styling
+
+Custom property                  | Description                               | Default
+---------------------------------|-------------------------------------------|--------------------
+`--host-page-display`            | Display property of the morph pages       | `block`
+`--host-slotted-page-diplay`     | Display property of morph pages chilidren | `block`
+
 ## How to use our **`<morph-pages>`** component
 
 - `morph-pages` is used to select one of its children to show just like iron-pages. One use is to cycle through a list of its 'pages' or 'children'.
