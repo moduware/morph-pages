@@ -36,12 +36,9 @@ function goToLink(self, page) {
   const direction = self.pageChangeAnimationDirection;
   
   let lastItemValue = self._indexToValue(self._lastIndex);
+
   // saving our current page to history if coming from tab changes / animation direction forward
-  if (direction == 'forward') {
-    self.push('navigationHistory', lastItemValue);
-  } else {
-    self.pop('navigationHistory');
-  }
+  _selectAnimationDirectionForwardOrBackward(self, direction, lastItemValue);
   
   let animation;
   if (self.platform == 'android') {
@@ -51,6 +48,19 @@ function goToLink(self, page) {
   }
 
   animation.then(() => this._animationCompleted(self, page));
+}
+
+/**
+ * Selects the animation direction either 'forward' or 'backward'
+ * @param {*} self 
+ * @param {String} direction - direction of animation either 'forward' or 'backward'
+ */
+function _selectAnimationDirectionForwardOrBackward(self, direction, lastItemValue) {
+  if (direction == 'forward') {
+    self.push('navigationHistory', lastItemValue);
+  } else {
+    self.pop('navigationHistory');
+  }
 }
 
 function _animationCompleted(self, page) {
