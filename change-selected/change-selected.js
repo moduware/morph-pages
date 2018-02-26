@@ -33,18 +33,16 @@ function _animateOnIronSelect(self, event) {
  * @param {Object} page - current page to animate
  */
 function goToLink(self, page) {
-  const direction = self.pageChangeAnimationDirection;
-  
   let lastItemValue = self._indexToValue(self._lastIndex);
 
   // saving our current page to history if coming from tab changes / animation direction forward
-  _savingPagesHistory(self, direction, lastItemValue);
+  _savingPagesHistory(self, lastItemValue);
   
   let animation;
   if (self.platform == 'android') {
-    animation = androidAnimation(self, self._valueToItem(lastItemValue), page, direction);
+    animation = androidAnimation(self, self._valueToItem(lastItemValue), page, self.pageChangeAnimationDirection);
   } else if (self.platform == 'ios') {
-    animation = iosAnimation(self, self._valueToItem(lastItemValue), page, direction);
+    animation = iosAnimation(self, self._valueToItem(lastItemValue), page, self.pageChangeAnimationDirection);
   }
 
   animation.then(() => this._animationCompleted(self, page));
@@ -52,10 +50,10 @@ function goToLink(self, page) {
 
 /**
  * Selects the animation direction either 'forward' or 'backward'
- * @param {*} self 
- * @param {String} direction - direction of animation either 'forward' or 'backward'
+ * @param {*} self
  */
-function _savingPagesHistory(self, direction, lastItemValue) {
+function _savingPagesHistory(self, lastItemValue) {
+  const direction = self.pageChangeAnimationDirection;
   if (direction == 'forward') {
     self.push('navigationHistory', lastItemValue);
   } else {
@@ -71,6 +69,6 @@ function _animationCompleted(self, page) {
 /**
  * Change this.selected to what is the current value of page
  */
-function _selectPage(self, page, direction) {
+function _selectPage(self, page) {
   self.selected = self._valueForItem(page);
 }
