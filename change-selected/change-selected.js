@@ -27,7 +27,7 @@ function _animateOnIronSelect(self, event) {
     const page = self._valueToItem(value);
     // saving our current page to history if coming from tab changes / animation direction forward
     _savingPagesHistory(self, lastItemValue);
-    goToLink(self, page, lastItemValue);
+    if (!self.noAnimation) animatePageByPlatform(self, page, lastItemValue);
   }
 }
 
@@ -36,7 +36,7 @@ function _animateOnIronSelect(self, event) {
  * @param {*} self 
  * @param {Object} page - current page to animate
  */
-function goToLink(self, page, lastItemValue) {
+function animatePageByPlatform(self, page, lastItemValue) {
   let animation;
   if (self.platform == 'android') {
     animation = androidAnimation(self, self._valueToItem(lastItemValue), page, self.pageChangeAnimationDirection);
