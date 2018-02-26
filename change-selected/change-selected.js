@@ -23,7 +23,10 @@ function _animateOnIronSelect(self, event) {
     const targetItemIndex = self.indexOf(event.detail.item);
     const value = self._indexToValue(targetItemIndex);
     const page = self._valueToItem(value);
-    goToLink(self, page);
+    let lastItemValue = self._indexToValue(self._lastIndex);
+    // saving our current page to history if coming from tab changes / animation direction forward
+    _savingPagesHistory(self, lastItemValue);
+    goToLink(self, page, lastItemValue);
   }
 }
 
@@ -32,12 +35,7 @@ function _animateOnIronSelect(self, event) {
  * @param {*} self 
  * @param {Object} page - current page to animate
  */
-function goToLink(self, page) {
-  let lastItemValue = self._indexToValue(self._lastIndex);
-
-  // saving our current page to history if coming from tab changes / animation direction forward
-  _savingPagesHistory(self, lastItemValue);
-  
+function goToLink(self, page, lastItemValue) {
   let animation;
   if (self.platform == 'android') {
     animation = androidAnimation(self, self._valueToItem(lastItemValue), page, self.pageChangeAnimationDirection);
