@@ -15,7 +15,7 @@ function _animateOnIronSelect(self, event) {
     return;
   }
 
-  // check for complete swipe or complete animation from selectNext or selectPrevious 
+  // check for complete swipe or complete animation
   if (self._completeSwipe || self._animationComplete) {
     self._completeSwipe = false;
     self._animationComplete = false;
@@ -38,7 +38,7 @@ function goToLink(self, page) {
   let lastItemValue = self._indexToValue(self._lastIndex);
 
   // saving our current page to history if coming from tab changes / animation direction forward
-  _selectAnimationDirectionForwardOrBackward(self, direction, lastItemValue);
+  _savingPagesHistory(self, direction, lastItemValue);
   
   let animation;
   if (self.platform == 'android') {
@@ -55,7 +55,7 @@ function goToLink(self, page) {
  * @param {*} self 
  * @param {String} direction - direction of animation either 'forward' or 'backward'
  */
-function _selectAnimationDirectionForwardOrBackward(self, direction, lastItemValue) {
+function _savingPagesHistory(self, direction, lastItemValue) {
   if (direction == 'forward') {
     self.push('navigationHistory', lastItemValue);
   } else {
