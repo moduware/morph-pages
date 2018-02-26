@@ -29,11 +29,12 @@ For the information about how to clone the desired repository, running the local
 
   | Custom Attribute |   Type  | Description                                                                                                                      | Default     |
   |:----------------:|:-------:|----------------------------------------------------------------------------------------------------------------------------------|-------------|
-  |  **`animationInProgress`**  | Boolean  | Indicates if there are animation in progess.| **`left`**  |
+  |  **`animationInProgress`**  | Boolean  | Indicates if there are animation in progess.| **no default**  |
   |    **`threshold`**   | Number | The value used to decide if a transition is effective and therefore if the page get swiped | **`cubic-bezier(0.4, 0.0, 0.2, 1)`**      |
   |  **`transitionTimingFunction`**  | String  | The CSS transition timing function applied | **`400`**  |
   |    **`navigationHistory`**   | Array | Array of previous pages location hash or value | **`() => []`**  |
   |    **`pageChangeAnimationDirection`**   | String | Page animation direction setter that links with morph-location's last-navigation-direction | **`forward`**  |
+  |    **`noAnimation`**   | Boolean | Sets Page animation on html markup so no animation when set to **'true'** | **`false`**  |
 
 ## Styling
 
