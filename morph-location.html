@@ -71,8 +71,8 @@
           historyLength = newHistoryLength;
           onForward();
         }
-        console.log('historyLength', historyLength);
-        console.log('historyPosition', historyPosition);
+        // console.log('historyLength', historyLength);
+        // console.log('historyPosition', historyPosition);
       }
     };
 
@@ -85,7 +85,7 @@
      * Sets lastNavigationDirection to backward
      */
     function _goBackward() {
-      console.log('backward');
+      // console.log('backward');
       that.set('lastNavigationDirection', 'backward');
     }
 
@@ -93,7 +93,7 @@
      * Sets lastNavigationDirection to forward
      */
     function _goForward() {
-      console.log('forward');
+      // console.log('forward');
       that.set('lastNavigationDirection', 'forward');
     }
 
@@ -101,7 +101,7 @@
      * Listen to popstate events
      */
     window.addEventListener('popstate', (event) => {
-      console.log('popState', window.location.href);
+      // console.log('popState', window.location.href);
       historyHandler();
     });
 
@@ -114,7 +114,7 @@
     history.replaceState = function (state) {
       //console.log(state);
       _historyReplaceState.call(this, ...arguments);
-      console.log('replaceState', window.location.href);
+      // console.log('replaceState', window.location.href);
       historyHandler(true);
     };
 
@@ -126,7 +126,7 @@
      */
     history.pushState = function (state) {
       _historyPushState.call(this, ...arguments);
-      console.log('pushState', window.location.href);
+      // console.log('pushState', window.location.href);
       historyHandler();
     };
 
