@@ -83,7 +83,6 @@
      * Sets lastNavigationDirection to backward
      */
     function _goBackward() {
-      console.log('backward');
       that.set('lastNavigationDirection', 'backward');
     }
 
@@ -91,7 +90,6 @@
      * Sets lastNavigationDirection to forward
      */
     function _goForward() {
-      console.log('forward');
       that.set('lastNavigationDirection', 'forward');
     }
 
@@ -99,7 +97,6 @@
      * Listen to popstate events
      */
     window.addEventListener('popstate', (event) => {
-      console.log('popState', window.location.href);
       historyHandler();
     });
 
@@ -123,7 +120,6 @@
      */
     history.pushState = function (state) {
       _historyPushState.call(this, ...arguments);
-      console.log('pushState', window.location.href);
       historyHandler();
     };
 
