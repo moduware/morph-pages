@@ -55,7 +55,7 @@
      * @polymer
      * @demo morph-pages/demo/index.html
      */
-    class MorphPages extends Polymer.GestureEventListeners( MorphElement(IronPagesSuperClass) ) {
+    class MorphPages extends Polymer.GestureEventListeners( ChangeSelected( MorphElement(IronPagesSuperClass) ) ) {
       static get is() { return 'morph-pages'; }
 
       static get properties() {
@@ -164,7 +164,7 @@
        * Listens to 'iron-select' and calls animation unless not needed
        */
       _onIronSelectItem(event) {
-        _animateOnIronSelect(this, event);
+        this._animateOnIronSelect(this, event);
       }
 
       /**
