@@ -1,5 +1,5 @@
-<link rel="import" href="../morph-element/morph-element.html">
-<link rel="import" href="../iron-location/iron-location.html">
+<link rel="import" href="/bower_components/morph-element/morph-element.html">
+<link rel="import" href="/bower_components/iron-location/iron-location.html">
 
 <dom-module id="morph-location">
   <script>
@@ -71,8 +71,6 @@
           historyLength = newHistoryLength;
           onForward();
         }
-        console.log('historyLength', historyLength);
-        console.log('historyPosition', historyPosition);
       }
     };
 
@@ -114,7 +112,6 @@
     history.replaceState = function (state) {
       //console.log(state);
       _historyReplaceState.call(this, ...arguments);
-      console.log('replaceState', window.location.href);
       historyHandler(true);
     };
 
