@@ -44,7 +44,7 @@
             this.setIosBackwardAnimationInitialState(props);
           }
     
-          requestAnimationId = window.requestAnimationFrame((timestamp) => {
+          window.requestAnimationFrame((timestamp) => {
             this[direction + 'IosAnimationStep'](props, () => {
               self.animationEnd(props);
               // remove shadow element from current or next page AND everything click forward or backward
@@ -157,7 +157,9 @@
         props.nextPage.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
     
         if (progress < props.duration) {
-          requestAnimationId = window.requestAnimationFrame((timestamp) => this.forwardIosAnimationStep(props, endCallback, timestamp));
+          window.requestAnimationFrame((timestamp) => {
+            this.forwardIosAnimationStep(props, endCallback, timestamp);
+          });
         } else {
           endCallback(props);
         }
@@ -197,7 +199,7 @@
     
         if (progress < props.duration) {
           window.requestAnimationFrame((timestamp) => {
-            this.backwardIosAnimationStep(props, endCallback, timestamp)
+            this.backwardIosAnimationStep(props, endCallback, timestamp);
           });
         } else {
           endCallback(props);
