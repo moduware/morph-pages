@@ -57,7 +57,7 @@
         if (self.platform == 'android') {
           animation = this.androidAnimation(self, self._valueToItem(lastItemValue), page, self.pageChangeAnimationDirection);
         } else if (self.platform == 'ios') {
-          animation = iosAnimation(self, self._valueToItem(lastItemValue), page, self.pageChangeAnimationDirection);
+          animation = this.iosAnimation(self, self._valueToItem(lastItemValue), page, self.pageChangeAnimationDirection);
         }
 
         animation.then(() => this._animationCompleted(self, page));

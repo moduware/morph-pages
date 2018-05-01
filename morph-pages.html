@@ -46,7 +46,7 @@
     let subTemplate;
     let requestAnimationId;
     const IronPagesSuperClass = customElements.get('iron-pages');
-    const MixinBase = (superclass) => ChangeSelected( AndroidAnimations( IosAnimations( MorphElement(superclass) ) ) );
+    const MixinBase = (superclass) => ChangeSelected( AndroidAnimations( IosAnimations( IosSwipeback( MorphElement(superclass) ) ) ) );
 
     /**
      * `morph-pages`
@@ -158,7 +158,7 @@
        *  This method is called when event 'track' is fired. This event listener is set up in constructor
        */
       _handleTrackSwipe(event) {
-        _onTrack(this, event);
+        this._onTrack(this, event);
       }
 
       /**

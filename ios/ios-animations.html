@@ -33,8 +33,8 @@
             morphPages: self,
             currentPage: currentPage,
             nextPage: nextPage,
-            shadowElement: createShadowElem(),
-            overlayElement: createOverlayElement()
+            shadowElement: this.createShadowElem(),
+            overlayElement:this.createOverlayElement()
           };
     
           // Transitions for pages
@@ -45,7 +45,7 @@
           }
     
           requestAnimationId = window.requestAnimationFrame((timestamp) => {
-            window[direction + 'IosAnimationStep'](props, () => {
+            this[direction + 'IosAnimationStep'](props, () => {
               self.animationEnd(props);
               // remove shadow element from current or next page AND everything click forward or backward
               props.shadowElement.parentNode.removeChild(props.shadowElement);
@@ -150,14 +150,14 @@
         // change overlay opacity from 0 to 1
         props.overlayElement.style.opacity = opacity;
     
-        const currentPageOffset = easeInOutQuad(timing) * props.pageOffsetLeftMax;
-        const nextPageOffset = 100 - easeInOutQuad(timing) * props.pageOffsetRightMax;
+        const currentPageOffset = this.easeInOutQuad(timing) * props.pageOffsetLeftMax;
+        const nextPageOffset = 100 -this.easeInOutQuad(timing) * props.pageOffsetRightMax;
     
         props.currentPage.style.transform = `translate3d(${currentPageOffset}%,0,0)`;
         props.nextPage.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
     
         if (progress < props.duration) {
-          requestAnimationId = window.requestAnimationFrame((timestamp) => forwardIosAnimationStep(props, endCallback, timestamp));
+          requestAnimationId = window.requestAnimationFrame((timestamp) => this.forwardIosAnimationStep(props, endCallback, timestamp));
         } else {
           endCallback(props);
         }
@@ -188,7 +188,7 @@
         // change overlay opacity from 1 to 0
         props.overlayElement.style.opacity = opacity;
     
-        const currentPageOffset = easeInOutQuad(timing) * props.pageOffsetRightMax;
+        const currentPageOffset = this.easeInOutQuad(timing) * props.pageOffsetRightMax;
         const nextPageOffset = props.pageOffsetLeftMax - easeInOutQuad(timing) * props.pageOffsetLeftMax;
     
         props.currentPage.style.transform = `translate3d(${currentPageOffset}%,0,0)`;
