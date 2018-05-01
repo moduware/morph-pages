@@ -191,7 +191,7 @@
         props.overlayElement.style.opacity = opacity;
     
         const currentPageOffset = this.easeInOutQuad(timing) * props.pageOffsetRightMax;
-        const nextPageOffset = props.pageOffsetLeftMax - easeInOutQuad(timing) * props.pageOffsetLeftMax;
+        const nextPageOffset = props.pageOffsetLeftMax - this.easeInOutQuad(timing) * props.pageOffsetLeftMax;
     
         props.currentPage.style.transform = `translate3d(${currentPageOffset}%,0,0)`;
         props.nextPage.style.transform = `translate3d(${nextPageOffset}%,0,0)`;
