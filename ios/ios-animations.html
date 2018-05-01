@@ -196,7 +196,9 @@
     
     
         if (progress < props.duration) {
-          requestAnimationId = window.requestAnimationFrame((timestamp) => backwardIosAnimationStep(props, endCallback, timestamp));
+          window.requestAnimationFrame((timestamp) => {
+            this.backwardIosAnimationStep(props, endCallback, timestamp)
+          });
         } else {
           endCallback(props);
         }
