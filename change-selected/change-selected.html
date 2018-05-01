@@ -55,7 +55,7 @@
       animatePageByPlatform(self, page, lastItemValue) {
         let animation;
         if (self.platform == 'android') {
-          animation = androidAnimation(self, self._valueToItem(lastItemValue), page, self.pageChangeAnimationDirection);
+          animation = this.androidAnimation(self, self._valueToItem(lastItemValue), page, self.pageChangeAnimationDirection);
         } else if (self.platform == 'ios') {
           animation = iosAnimation(self, self._valueToItem(lastItemValue), page, self.pageChangeAnimationDirection);
         }
