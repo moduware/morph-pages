@@ -46,6 +46,7 @@
     let subTemplate;
     let requestAnimationId;
     const IronPagesSuperClass = customElements.get('iron-pages');
+    const MixinBase = (superclass) => ChangeSelected( AndroidAnimations( IosAnimations( MorphElement(superclass) ) ) );
 
     /**
      * `morph-pages`
@@ -55,7 +56,7 @@
      * @polymer
      * @demo morph-pages/demo/index.html
      */
-    class MorphPages extends Polymer.GestureEventListeners( ChangeSelected( MorphElement(IronPagesSuperClass) ) ) {
+    class MorphPages extends Polymer.GestureEventListeners( MixinBase(IronPagesSuperClass) ) {
       static get is() { return 'morph-pages'; }
 
       static get properties() {
