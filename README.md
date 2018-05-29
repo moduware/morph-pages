@@ -20,11 +20,7 @@ For the information about how to clone the desired repository, running the local
     <img src="demo-images/morph-pages-android-demo.gif" alt="Morph Pages element" />
   </p>
 
-  <p>SWIPEBACK On IOS platform:</p>
 
-  <p align="center">
-    <img src="demo-images/morph-pages-ios-swipeback-demo.gif" alt="Morph Pages element" />
-  </p>
 ## Attributes
 
   | Custom Attribute |   Type  | Description                                                                                                                      | Default     |
