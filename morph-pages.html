@@ -92,6 +92,12 @@
             value: 'forward'
           },
 
+          /** Page swipeback setter. when true there will be no swipeback on ios when swiping back on pages */
+          noSwipeback: {
+            type: Boolean,
+            value: false
+          },
+
           /** Page animation setter. when true there will be no animation when transitioning to pages */
           noAnimation: {
             type: Boolean,
@@ -157,6 +163,8 @@
        *  This method is called when event 'track' is fired. This event listener is set up in constructor
        */
       _handleTrackSwipe(event) {
+        if (this.noSwipeback) {return};
+
         this._onTrack(this, event);
       }
 
