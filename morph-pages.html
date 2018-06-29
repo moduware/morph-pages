@@ -135,13 +135,13 @@
       
       ready() {
         super.ready();
-        // Set up events listener everytime selected is change and current selected is deselected 
-        this.addEventListener('iron-select', this._onIronSelectItem);
-        this.addEventListener('iron-deselect', this._onIronDeselectItem);
       }
       
       connectedCallback() {
         super.connectedCallback();
+        // Set up events listener everytime selected is change and current selected is deselected 
+        this.addEventListener('iron-select', this._onIronSelectItem);
+        this.addEventListener('iron-deselect', this._onIronDeselectItem);
       }
 
       disconnectedCallback() {
@@ -172,6 +172,7 @@
        * Listens to 'iron-select' and calls animation unless not needed
        */
       _onIronSelectItem(event) {
+        if (this.noAnimation) { return;}
         this._animateOnIronSelect(this, event);
       }
 

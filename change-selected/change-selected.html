@@ -43,7 +43,7 @@
           const page = self._valueToItem(value);
           // saving our current page to history if coming from tab changes / animation direction forward
           this._savingPagesHistory(self, lastItemValue);
-          if (!self.noAnimation) this.animatePageByPlatform(self, page, lastItemValue);
+          this.animatePageByPlatform(self, page, lastItemValue);
         }
       }
 
