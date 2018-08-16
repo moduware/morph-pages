@@ -2,6 +2,9 @@
   "name": "morph-pages",
   "description": "Pages element that morphs for current mobile OS",
   "main": "morph-pages.html",
+  "demos": {
+    "Demo": "demo/index.html"
+  },
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "morph-element": "https://github.com/moduware/morph-element.git#master",
