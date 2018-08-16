@@ -1,5 +1,7 @@
 # morph-pages
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/PolymerElements/paper-progress)
+
 Pages element for polymorph components that morphs for current mobile OS.
 
 ## Getting Started
