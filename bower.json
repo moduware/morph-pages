@@ -3,7 +3,7 @@
   "description": "Pages element that morphs for current mobile OS",
   "main": "morph-pages.html",
   "demos": {
-    "Demo": "demo/index.html"
+    "Demo": "demo/ios-demo.html"
   },
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",

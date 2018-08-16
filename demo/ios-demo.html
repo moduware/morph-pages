@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>morph-pages demo</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../app-layout/app-layout.html">
+  <link rel="import" href="../../app-layout/app-header/app-header.html">
+  <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
+  <link rel="import" href="../../iron-icons/iron-icons.html">
+  <link rel="import" href="/bower_components/morph-location/morph-location.html" onerror="console.warn('Can\'t load location from bower_components, loading local version')">
+  <link rel="import" href="../morph-location.html">
+  <link rel="import" href="/bower_components/morph-pages/morph-pages.html" onerror="console.warn('Can\'t load pages from bower_components, loading local version')">
+  <link rel="import" href="../morph-pages.html">
+
+  <custom-style>
+    <style is="custom-style" include="demo-pages-shared-styles">
+      .container {
+        position: relative;
+        width: 360px;
+        height: 640px;
+        box-sizing: border-box;
+        border: 1px solid black;
+        overflow: hidden;
+      }
+
+      .page {
+        width: 100%;
+        overflow-y: scroll;
+      }
+
+      .header-container {
+        width: 360px;
+      }
+
+      app-toolbar {
+        padding: 0 0 0 0;
+      }
+
+      .background-white {
+        background-color: white;
+        color: red;
+      }
+
+      .background-red {
+        background-color: #d12f3d;
+      }
+
+      .background-green {
+        background-color: green;
+        color: white;
+      }
+
+      .background-blue {
+        background-color: deepskyblue;
+      }
+
+      .background-orange {
+        background-color: orange;
+      }
+
+      .background-yellow {
+        background-color: yellow;
+      }
+
+      morph-pages {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+      }
+
+      h1 {
+        text-align: center;
+      }
+    </style>
+  </custom-style>
+</head>
+
+<body>
+  <div class="vertical-section-container centered">
+    <h3>morph-pages demo for IOS</h3>
+    <demo-snippet>
+      <dom-bind>
+        <template>
+          <app-toolbar class="header-container">
+            <paper-icon-button icon="arrow-back" onclick="previousPage()"></paper-icon-button>
+            <div main-title>morph-pages</div>
+          </app-toolbar>
+          <div class="links">
+            <a href="#one">One</a>
+            <a href="#two">Two</a>
+            <a href="#three">Three</a>
+          </div>
+          <div class="container">
+            <morph-location hash="{{currentPage}}" last-navigation-direction="{{direction}}" dwell-time="0"></morph-location>
+            <morph-pages platform="ios" selected="{{currentPage}}" page-change-animation-direction="[[direction]]" attr-for-selected="name" fallback-selection="one">
+              <div name="one" class="page background-green">
+                <h1>One</h1>
+              </div>
+              <div name="two" class="page background-white">
+                <h1>Two</h1>
+              </div>
+              <div name="three" class="page background-green">
+                <h1>Three</h1>
+              </div>
+            </morph-pages>
+          </div>
+
+          <script>
+            /**
+            * move to previous page
+            */
+            previousPage = function () {
+              history.back();
+            };
+
+            // add paragraph text to all pages
+            (function () {
+              var pages = document.querySelector('morph-pages');
+              var nodes = pages.childNodes;
+
+              for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].nodeName.toLowerCase() == 'div') {
+                  var paragraphElement = document.createElement('p');
+                  var text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum';
+                  text += text;
+                  text += text;
+                  text += text;
+                  paragraphElement.textContent = text;
+                  nodes[i].insertAdjacentElement('beforeend', paragraphElement);
+                }
+              }
+            })();
+
+          </script>
+        </template>
+      </dom-bind>
+      <script>
+        var bind = document.querySelector('dom-bind');
+      </script>
+    </demo-snippet>
+  </div>
+</body>
+
+</html>
