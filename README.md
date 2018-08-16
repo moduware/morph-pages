@@ -1,8 +1,10 @@
 # morph-pages
+
 Pages element for polymorph components that morphs for current mobile OS.
 
-## Getting Started:
-For the information about how to clone the desired repository, running the local server and testing, please refer to this [link](https://github.com/moduware/polymorph-components/blob/master/INFO.md).
+## Getting Started
+
+For the information about how to clone the desired repository, running the local server and testing, please refer to Polymorph elements getting started docs at the end of this repository.
 
 ## Demo
 
@@ -99,3 +101,9 @@ Custom property                  | Description                               | D
 ```
 
 - morph-pages inherited from iron-pages and is backwards compatible. For more detailed documentation on how to use iron-pages go [here](https://www.webcomponents.org/element/PolymerElements/iron-pages/elements/iron-pages).
+
+## Further help
+
+For more information on how to install and run test please go here - [Polymorph elements getting started]
+
+[Polymorph elements getting started]: https://github.com/moduware/polymorph-components/blob/master/INFO.md
