@@ -13,7 +13,6 @@
   <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
   <link rel="import" href="../../app-layout/app-layout.html">
   <link rel="import" href="../../app-layout/app-header/app-header.html">
-  <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
   <link rel="import" href="../../iron-icons/iron-icons.html">
   <link rel="import" href="../morph-location.html">
   
@@ -48,11 +47,6 @@
         color: red;
       }
 
-      .background-green {
-        background-color: green;
-        color: white;
-      }
-
       morph-pages {
         position: absolute;
         top: 0;
@@ -76,8 +70,7 @@
       <dom-bind>
         <template>
           <app-toolbar class="header-container">
-            <paper-icon-button icon="arrow-back" onclick="previousPage()"></paper-icon-button>
-            <div main-title>morph-pages</div>
+            <div main-title>morph-pages IOS</div>
           </app-toolbar>
           <div class="links">
             <a href="#one">One</a>
@@ -100,13 +93,6 @@
           </div>
 
           <script>
-            /**
-            * move to previous page
-            */
-            previousPage = function () {
-              history.back();
-            };
-
             // add paragraph text to all pages
             (function () {
               var pages = document.querySelector('morph-pages');
