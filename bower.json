@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
-    "morph-element": "https://github.com/moduware/morph-element.git#master",
+    "morph-element": "https://github.com/moduware/morph-element.git#polymer3",
     "iron-pages": "polymerelements/iron-pages#^2.0.1",
     "iron-location": "PolymerElements/iron-location#^2.0.3"
   },
@@ -20,8 +20,7 @@
     "iron-icons": "^2.0.1"
   },
   "resolutions": {
-    "polymer": "^2.0.0",
-    "morph-shared-colors": "master",
-    "morph-shared-styles": "master"
-  }
+    "polymer": "^2.0.0"
+  },
+  "license": "Apache-2.0"
 }
