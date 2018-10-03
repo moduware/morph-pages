@@ -7,17 +7,28 @@
 
   <title>morph-pages demo</title>
 
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
 
-  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-  <link rel="import" href="../../app-layout/app-layout.html">
-  <link rel="import" href="../../app-layout/app-header/app-header.html">
-  <link rel="import" href="../morph-location.html">
+  <script type="module" src="../../../@polymer/iron-demo-helpers/demo-pages-shared-styles.js"></script>
+  <script type="module" src="../../../@polymer/iron-demo-helpers/demo-snippet.js"></script>
+  <script type="module" src="../../../@polymer/app-layout/app-layout.js"></script>
+  <script type="module" src="../../../@polymer/app-layout/app-header/app-header.js"></script>
+  <script type="module" src="../morph-location.js"></script>
   
-  <link rel="import" href="../morph-pages.html">
+  <script type="module" src="../morph-pages.js"></script>
 
-  <custom-style>
+  <!-- FIXME(polymer-modulizer):
+        These imperative modules that innerHTML your HTML are
+        a hacky way to be sure that any mixins in included style
+        modules are ready before any elements that reference them are
+        instantiated, otherwise the CSS @apply mixin polyfill won't be
+        able to expand the underlying CSS custom properties.
+        See: https://github.com/Polymer/polymer-modulizer/issues/154
+        -->
+    <script type="module">
+const $_documentContainer = document.createElement('template');
+
+$_documentContainer.innerHTML = `<custom-style>
     <style is="custom-style" include="demo-pages-shared-styles">
       .container {
         position: relative;
@@ -59,17 +70,23 @@
         text-align: center;
       }
     </style>
-  </custom-style>
+  </custom-style>`;
+
+document.body.appendChild($_documentContainer.content);
+</script>
 </head>
 
 <body>
-  <div class="vertical-section-container centered">
+  <script type="module">
+const $_documentContainer = document.createElement('template');
+
+$_documentContainer.innerHTML = `<div class="vertical-section-container centered">
     <h3>morph-pages demo for IOS</h3>
     <demo-snippet>
       <dom-bind>
         <template>
           <app-toolbar class="header-container">
-            <div main-title>morph-pages IOS</div>
+            <div main-title="">morph-pages IOS</div>
           </app-toolbar>
           <div class="links">
             <a href="#one">One</a>
@@ -110,12 +127,23 @@
               }
             })();
 
-          </script>
+          &lt;/script>
         </template>
       </dom-bind>
       <script>
         var bind = document.querySelector('dom-bind');
-      </script>
+      &lt;/script>
+    </demo-snippet>
+  </div>`;
+
+document.body.appendChild($_documentContainer.content);
+</script>r/iron-demo-helpers/demo-snippet.js';
+import '@polymer/app-layout/app-layout.js';
+import '@polymer/app-layout/app-header/app-header.js';
+import '../morph-location.js';
+import '../morph-pages.js';
+var bind = document.querySelector('dom-bind');
+</script>
     </demo-snippet>
   </div>
 </body>

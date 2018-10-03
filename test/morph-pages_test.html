@@ -6,11 +6,11 @@
 
     <title>morph-pages test</title>
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
-    <link rel="import" href="../scripts.html">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+    <script type="module" src="../scripts.js"></script>
 
-    <link rel="import" href="../morph-pages.html">
+    <script type="module" src="../morph-pages.js"></script>
   </head>
   <body>
 
@@ -47,7 +47,7 @@
       </template>
     </test-fixture>
 
-    <script>
+    <script type="module">
       describe('morph-pages', () => {
         let pages;
 
@@ -190,6 +190,7 @@
         // expect(elementHeader.innerHTML).to.be.equal('Hello morph-pages!');
 
       });
+      
     </script>
 
   </body>
