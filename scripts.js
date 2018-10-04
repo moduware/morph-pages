@@ -32,12 +32,21 @@ export function androidAnimation(self, currentPage, nextPage, direction) {
     props.nextPage.style.opacity = 0;
 
     window.requestAnimationFrame((timestamp) => {
-      forwardAndroidAnimationStep(props, () => {
-        self.animationEnd(props);
-        self.animationInProgress = false;
-        self._animationComplete = true;
-        resolve();
-      }, timestamp);
+      if (direction == "forward") {
+        forwardAndroidAnimationStep(props, () => {
+          self.animationEnd(props);
+          self.animationInProgress = false;
+          self._animationComplete = true;
+          resolve();
+        }, timestamp);
+      } else {
+        backwardAndroidAnimationStep(props, () => {
+          self.animationEnd(props);
+          self.animationInProgress = false;
+          self._animationComplete = true;
+          resolve();
+        }, timestamp);
+      }
     });
   });
 }
@@ -123,18 +132,33 @@ function iosAnimation(self, currentPage, nextPage, direction) {
     }
     
     requestAnimationId = window.requestAnimationFrame((timestamp) => {
-      forwardIosAnimationStep(props, () => {
-        self.animationEnd(props);
-        // remove shadow element from current or next page AND everything click forward or backward
-        props.shadowElement.parentNode.removeChild(props.shadowElement);
-        props.shadowElement = null;
-        // remove overlay element from current or next page
-        props.overlayElement.parentNode.removeChild(props.overlayElement);
-        props.overlayElement = null;
-        self.animationInProgress = false;
-        self._animationComplete = true;
-        resolve();
-      }, timestamp);
+      if(direction == "forward") {
+        forwardIosAnimationStep(props, () => {
+          self.animationEnd(props);
+          // remove shadow element from current or next page AND everything click forward or backward
+          props.shadowElement.parentNode.removeChild(props.shadowElement);
+          props.shadowElement = null;
+          // remove overlay element from current or next page
+          props.overlayElement.parentNode.removeChild(props.overlayElement);
+          props.overlayElement = null;
+          self.animationInProgress = false;
+          self._animationComplete = true;
+          resolve();
+        }, timestamp);
+      } else {
+        backwardIosAnimationStep(props, () => {
+          self.animationEnd(props);
+          // remove shadow element from current or next page AND everything click forward or backward
+          props.shadowElement.parentNode.removeChild(props.shadowElement);
+          props.shadowElement = null;
+          // remove overlay element from current or next page
+          props.overlayElement.parentNode.removeChild(props.overlayElement);
+          props.overlayElement = null;
+          self.animationInProgress = false;
+          self._animationComplete = true;
+          resolve();
+        }, timestamp);
+      }
     });
   });
 }
