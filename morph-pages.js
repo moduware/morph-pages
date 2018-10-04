@@ -6,6 +6,7 @@ import { DomModule } from '@polymer/polymer/lib/elements/dom-module.js';
 import { addListener } from '@polymer/polymer/lib/utils/gestures.js';
 
 import { example, _animateOnIronSelect } from './change-selected/change-selected.js';
+import { onTrack } from './ios/ios-swipeback';
 import './morph-location.js';
 
 var $_documentContainer = document.createElement('template');
@@ -170,7 +171,7 @@ class MorphPages extends GestureEventListeners( MixinBase(IronPagesSuperClass) )
   _handleTrackSwipe(event) {
     if (this.noSwipeback) {return;}
 
-    this._onTrack(this, event);
+    onTrack(this, event);
   }
 
   /**

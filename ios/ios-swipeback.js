@@ -1,7 +1,10 @@
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+import { createShadowElem, createOverlayElement } from '../ios/ios-animations.js';
+
 /**
  * Listener callback handleTrack() detects track and uses trackStart, trackMove and trackEnd to manage swiping
  */
-function _onTrack(self, event) {
+export function onTrack(self, event) {
   var track = event.detail;
   // this are checks if touch tracking needs to be cancelled
   if (track.dx < 0 || self.platform != 'ios') {
@@ -16,11 +19,11 @@ function _onTrack(self, event) {
   // this is checking for track.state == equal and swipe is left to right
   if (track.state === 'start' && Math.abs(track.dy) < Math.abs(track.dx)) {
     self._swipeStarted = true;
-    this._trackStart(self, track, props);
+    _trackStart(self, track, props);
   } else if (track.state == 'track' && self._swipeStarted) {
-    this._trackMove(self, track);
+    _trackMove(self, track);
   } else if (track.state == 'end' && self._swipeStarted) {
-    this._trackEnd(self, track);
+    _trackEnd(self, track);
   }
 }
 
@@ -33,20 +36,20 @@ function _trackStart(self, trackData, props) {
     return;
   }
   // set up the pages to animate
-  this._setUpSwipePages(self, props);
+  _setUpSwipePages(self, props);
   // Translate current page and previous page using trackDate.dx
   _animatePages(self, trackData.dx);
 
   // Prevent regular touchmove event (disables vertical scroll) the other half which removes this is in the _trackEnd()
-  window.addEventListener('touchmove', this._preventTouchMove);
+  window.addEventListener('touchmove', _preventTouchMove);
 }
 
 /** 
  *  Gets all data event.details as long as track.state = 'track'. 
  */
 function _trackMove(self, trackData) {
-  let shadow = Polymer.dom(this.root).querySelector('#shadow');
-  let overlay = Polymer.dom(this.root).querySelector('#overlay');
+  let shadow = dom(self.root).querySelector('#shadow');
+  let overlay = dom(self.root).querySelector('#overlay');
   let opacity = 1 - trackData.dx / 360;
   
   if (shadow != null) shadow.style.opacity = opacity;
@@ -65,18 +68,18 @@ function _trackEnd(self, trackData) {
   }
 
   // set up current and previous pages and set listener for 'transitionend'
-  self._currentPageElement.style.transition = this._computeTransition(self, 1);
+  self._currentPageElement.style.transition = _computeTransition(self, 1);
   self._currentPageElement.addEventListener('transitionend', _pageTransitionEndHandler);
-  self._previousPageElement.style.transition = this._computeTransition(self, 1);
+  self._previousPageElement.style.transition = _computeTransition(self, 1);
   self._previousPageElement.addEventListener('transitionend', _pageTransitionEndHandler);
 
   // The element is swipe away when swiping get passed the threshold
-  self._completeSwipe = Math.abs(trackData.dx) > this._getOffsetWidth(self) * self.threshold;
+  self._completeSwipe = Math.abs(trackData.dx) > _getOffsetWidth(self) * self.threshold;
   if (self._completeSwipe) {
     // trigger the animation in the right direction
-    _animatePages(self, this._getOffsetWidth(self));
-    let shadow = Polymer.dom(this.root).querySelector('#shadow');
-    let overlay = Polymer.dom(this.root).querySelector('#overlay');
+    _animatePages(self, _getOffsetWidth(self));
+    let shadow = dom(self.root).querySelector('#shadow');
+    let overlay = dom(self.root).querySelector('#overlay');
     if (shadow != null) shadow.style.opacity = 0;
     if (overlay != null) overlay.style.opacity = 0;
     // remove the last element of navigationHistory when swipe is complete
@@ -89,7 +92,7 @@ function _trackEnd(self, trackData) {
   }
 
   // enable regular touchmove event ( enables vertical scroll again)
-  window.removeEventListener('touchmove', this._preventTouchMove);
+  window.removeEventListener('touchmove', _preventTouchMove);
 }
 
 /**
@@ -114,7 +117,7 @@ function _setUpSwipePages(self, props) {
   self._previousPageElement = null;
   
   // selected page
-  this._initCurrentPage(self, self.selectedItem, 0, props);
+  _initCurrentPage(self, self.selectedItem, 0, props);
 
   // gets the last element of navigationHistory and assigns to previous page
   var value = self.navigationHistory[self.navigationHistory.length - 1];
@@ -123,7 +126,7 @@ function _setUpSwipePages(self, props) {
   self._leftCandidate = page;
   self._leftCandidate.style.zIndex = 2;
   self.selectedItem.style.zIndex = 3;
-  this._initPreviousPage(self, self._leftCandidate, -this._getOffsetWidth(self), props);
+  _initPreviousPage(self, self._leftCandidate, -_getOffsetWidth(self), props);
 }
 
 // initPage - set up page for animatioin
@@ -185,8 +188,8 @@ function _getOffsetWidth(self) {
 
 function _pageTransitionEndHandler(event) {
   this.removeAttribute('style');
-  let shadow = Polymer.dom(this.root).querySelector('#shadow');
-  let overlay = Polymer.dom(this.root).querySelector('#overlay');
+  let shadow = dom(self.root).querySelector('#shadow');
+  let overlay = dom(self.root).querySelector('#overlay');
   if (shadow != null) shadow.parentNode.removeChild(shadow);
   if (overlay != null) overlay.parentNode.removeChild(overlay);
 }

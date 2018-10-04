@@ -110,7 +110,7 @@ function setIosBackwardAnimationInitialState(props) {
 }
 
 /** creates a shadow element during animation */
-function createShadowElem() {
+export function createShadowElem() {
   let shadowElement = document.createElement('div');
   shadowElement.style.background = `linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 10%, rgba(0,0,0,0.01) 50%, rgba(0,0,0,0.2) 100%)`;
   shadowElement.style.position = `absolute`;
@@ -123,7 +123,7 @@ function createShadowElem() {
 }
 
 /** create a overlay element during animation */
-function createOverlayElement() {
+export function createOverlayElement() {
   let overlayElement = document.createElement('div');
   overlayElement.style.width = `100%`;
   overlayElement.style.zIndex = 1000;
