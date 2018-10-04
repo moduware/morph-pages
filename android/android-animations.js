@@ -5,7 +5,7 @@
  * @param {*} nextPage - The next page to be animated
  * @param {String} direction - The direction of the animation
  */
-function androidAnimation(self, currentPage, nextPage, direction) {
+export function androidAnimation(self, currentPage, nextPage, direction) {
   return new Promise((resolve, reject) => {
     self.animationInProgress = true;
     self._animationComplete = false;
@@ -28,12 +28,21 @@ function androidAnimation(self, currentPage, nextPage, direction) {
     props.nextPage.style.opacity = 0;
 
     window.requestAnimationFrame((timestamp) => {
-      window[direction + 'AndroidAnimationStep'](props, () => {
-        self.animationEnd(props);
-        self.animationInProgress = false;
-        self._animationComplete = true;
-        resolve();
-      }, timestamp);
+      if(direction == 'forward') {
+        forwardAndroidAnimationStep(props, () => {
+          self.animationEnd(props);
+          self.animationInProgress = false;
+          self._animationComplete = true;
+          resolve();
+        }, timestamp);
+      } else {
+        backwardAndroidAnimationStep(props, () => {
+          self.animationEnd(props);
+          self.animationInProgress = false;
+          self._animationComplete = true;
+          resolve();
+        }, timestamp);
+      }
     });
   });
 }

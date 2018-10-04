@@ -1,11 +1,12 @@
 import { MorphElement } from 'morph-element/morph-element.js';
 import '@polymer/iron-pages/iron-pages.js';
-import { GestureEventListeners } from '@polymer/polymer/lib/mixins/gesture-event-listeners.js';
 import '@polymer/polymer/lib/utils/render-status.js';
-import './morph-location.js';
-import { _animateOnIronSelect, androidAnimation } from './scripts.js';
+import { GestureEventListeners } from '@polymer/polymer/lib/mixins/gesture-event-listeners.js';
 import { DomModule } from '@polymer/polymer/lib/elements/dom-module.js';
 import { addListener } from '@polymer/polymer/lib/utils/gestures.js';
+
+import { example, _animateOnIronSelect } from './change-selected/change-selected.js';
+import './morph-location.js';
 
 var $_documentContainer = document.createElement('template');
 
@@ -138,6 +139,7 @@ class MorphPages extends GestureEventListeners( MixinBase(IronPagesSuperClass) )
   
   ready() {
     super.ready();
+    console.log(example);
   }
   
   connectedCallback() {

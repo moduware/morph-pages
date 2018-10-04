@@ -1,3 +1,5 @@
+var requestAnimationId;
+
 /**
  * The entry point method for ios animation using requestAnimationFrame
  * @param {*} self 
@@ -5,7 +7,7 @@
  * @param {*} nextPage - The next page to be animated
  * @param {String} direction - The direction of the animation
  */
-function iosAnimation(self, currentPage, nextPage, direction) {
+export function iosAnimation(self, currentPage, nextPage, direction) {
   return new Promise((resolve, reject) => {
     self.animationInProgress = true;
     self._animationComplete = false;
@@ -30,18 +32,33 @@ function iosAnimation(self, currentPage, nextPage, direction) {
     }
     
     requestAnimationId = window.requestAnimationFrame((timestamp) => {
-      window[direction + 'IosAnimationStep'](props, () => {
-        self.animationEnd(props);
-        // remove shadow element from current or next page AND everything click forward or backward
-        props.shadowElement.parentNode.removeChild(props.shadowElement);
-        props.shadowElement = null;
-        // remove overlay element from current or next page
-        props.overlayElement.parentNode.removeChild(props.overlayElement);
-        props.overlayElement = null;
-        self.animationInProgress = false;
-        self._animationComplete = true;
-        resolve();
-      }, timestamp);
+      if(direction == "forward") {
+        forwardIosAnimationStep(props, () => {
+          self.animationEnd(props);
+          // remove shadow element from current or next page AND everything click forward or backward
+          props.shadowElement.parentNode.removeChild(props.shadowElement);
+          props.shadowElement = null;
+          // remove overlay element from current or next page
+          props.overlayElement.parentNode.removeChild(props.overlayElement);
+          props.overlayElement = null;
+          self.animationInProgress = false;
+          self._animationComplete = true;
+          resolve();
+        }, timestamp);
+      } else {
+        backwardIosAnimationStep(props, () => {
+          self.animationEnd(props);
+          // remove shadow element from current or next page AND everything click forward or backward
+          props.shadowElement.parentNode.removeChild(props.shadowElement);
+          props.shadowElement = null;
+          // remove overlay element from current or next page
+          props.overlayElement.parentNode.removeChild(props.overlayElement);
+          props.overlayElement = null;
+          self.animationInProgress = false;
+          self._animationComplete = true;
+          resolve();
+        }, timestamp);
+      }
     });
   });
 }

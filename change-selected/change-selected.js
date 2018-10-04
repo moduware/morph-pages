@@ -1,9 +1,12 @@
+import { iosAnimation } from '../ios/ios-animations.js';
+import { androidAnimation } from '../android/android-animations.js';
+
 /**
  * Animate pages when 'iron-select' fires
  * @param {*} self 
  * @param {*} event 
  */
-function _animateOnIronSelect(self, event) {
+export function _animateOnIronSelect(self, event) {
   let lastItemValue = self._indexToValue(self._lastIndex);
   
   // prevent bubbling of same event to child. 
@@ -72,5 +75,4 @@ function _selectPage(self, page) {
   self.selected = self._valueForItem(page);
 }
 
-
-export { _animateOnIronSelect };
+export const example = "Hello World";
