@@ -47,7 +47,9 @@ function animatePageByPlatform(self, page, lastItemValue) {
     animation = iosAnimation(self, self._valueToItem(lastItemValue), page, self.pageChangeAnimationDirection);
   }
 
-  animation.then(() => _animationCompleted(self, page));
+  if(animation) {
+    animation.then(() => _animationCompleted(self, page));
+  }
 }
 
 /**
@@ -74,5 +76,3 @@ function _animationCompleted(self, page) {
 function _selectPage(self, page) {
   self.selected = self._valueForItem(page);
 }
-
-export const example = "Hello World";

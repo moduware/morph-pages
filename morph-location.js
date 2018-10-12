@@ -1,10 +1,10 @@
-import { MorphElement } from 'morph-element/morph-element.js';
+import { MorphElement } from '@moduware/morph-element/morph-element.js';
 import '@polymer/iron-location/iron-location.js';
 
 var IronLocationSuperClass = customElements.get('iron-location');
 var that;
 
-class MorphLocation extends MorphElement(IronLocationSuperClass) {
+export class MorphLocation extends MorphElement(IronLocationSuperClass) {
   static get is() { return 'morph-location'; }
 
   static get properties() { 

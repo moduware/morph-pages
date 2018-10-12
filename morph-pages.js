@@ -1,11 +1,11 @@
-import { MorphElement } from 'morph-element/morph-element.js';
+import { MorphElement } from '@moduware/morph-element/morph-element.js';
 import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/polymer/lib/utils/render-status.js';
 import { GestureEventListeners } from '@polymer/polymer/lib/mixins/gesture-event-listeners.js';
 import { DomModule } from '@polymer/polymer/lib/elements/dom-module.js';
 import { addListener } from '@polymer/polymer/lib/utils/gestures.js';
 
-import { example, _animateOnIronSelect } from './change-selected/change-selected.js';
+import { _animateOnIronSelect } from './change-selected/change-selected.js';
 import { onTrack } from './ios/ios-swipeback';
 import './morph-location.js';
 
@@ -49,7 +49,6 @@ document.head.appendChild($_documentContainer.content);
 
 var subTemplate;
 var IronPagesSuperClass = customElements.get('iron-pages');
-// var MixinBase = (superclass) => ChangeSelected( AndroidAnimations( IosAnimations( IosSwipeback( MorphElement(superclass) ) ) ) );
 var MixinBase = (superclass) => MorphElement(superclass);
 
 /**
@@ -60,7 +59,7 @@ var MixinBase = (superclass) => MorphElement(superclass);
  * @polymer
  * @demo morph-pages/demo/index.html
  */
-class MorphPages extends GestureEventListeners( MixinBase(IronPagesSuperClass) ) {
+export class MorphPages extends GestureEventListeners( MixinBase(IronPagesSuperClass) ) {
   static get is() { return 'morph-pages'; }
 
   static get properties() {
@@ -140,7 +139,6 @@ class MorphPages extends GestureEventListeners( MixinBase(IronPagesSuperClass) )
   
   ready() {
     super.ready();
-    console.log(example);
   }
   
   connectedCallback() {
