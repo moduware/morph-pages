@@ -10,6 +10,9 @@
     <script src="../node_modules/wct-browser-legacy/browser.js"></script>
 
     <script type="module" src="../morph-pages.js"></script>
+    <script type="module">
+      
+    </script>
   </head>
   <body>
 
@@ -26,7 +29,7 @@
 
     <test-fixture id="selected">
       <template>
-        <morph-pages selected="0" platform="ios">
+        <morph-pages selected="0" platform="ios" no-swipeback>
           <div id="page0">Page 0</div>
           <div id="page1">Page 1</div>
           <div id="page2">Page 2</div>
@@ -47,8 +50,12 @@
     </test-fixture>
 
     <script type="module">
+      import {onTrack} from '../ios/ios-swipeback.js';
+
       describe('morph-pages', () => {
         let pages;
+
+        
 
         describe('basic defaults', () => {
           beforeEach(function(done) {
@@ -158,6 +165,39 @@
           it('should add every time there is new selected item', () => {
             expect(pages.navigationHistory.length).to.be.equal(3);
           });
+        });
+
+        describe('detect no-swipeback', () => {
+          beforeEach(function (done) {
+            pages = fixture('selected');
+            // to make sure iron-items is visible before running test
+            pages.addEventListener('iron-items-changed', function onIronItemsChanged() {
+              pages.removeEventListener('iron-items-changed', onIronItemsChanged);
+              done();
+            });
+            // sinon.stub(swipe, 'onTrack').callsFake(() => {});
+            // swipe.onTrack = function() {};
+
+            stub('morph-pages', {
+              _startTracking: function () {
+                console.log('_startTracking called!');
+              }
+            });
+
+          });
+
+          it('Should call _animateDeleteAction when item-delete attribute is present on morph-button', () => {
+            const spy = sinon.spy(onTrack);
+            pages.noSwipeback = false;
+            pages._handleTrackSwipe();
+            expect(pages._startTracking.callCount).to.be.equal(1);
+          });
+
+          // it('should not call onTrack', () => {
+          //   pages._handleTrackSwipe
+          //   // expect(pages._handleTrackSwipe).to.be.equal(3);
+          //   expect(pages.onTrack.callCount).to.be.equal(1);
+          // });
         });
 
         describe('attribute name selection', () => {

@@ -1,5 +1,7 @@
-import { MorphElement } from '@moduware/morph-element/morph-element.js';
-import '@polymer/iron-location/iron-location.js';
+// This needs to be its own morph components and these are its dependencies
+// It doesn't need this for now for it is being used together with morph-pages and adding it causes error
+// import { MorphElement } from '@moduware/morph-element/morph-element.js';
+// import '@polymer/iron-location/iron-location.js';
 
 var IronLocationSuperClass = customElements.get('iron-location');
 var that;
