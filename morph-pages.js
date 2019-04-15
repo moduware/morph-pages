@@ -18,6 +18,10 @@ class MorphPages extends LitElement {
         :host {
         }
 
+      ::slotted(:not(.page--current)) {
+        display: none;
+      }
+
         /* if iOS assigning colors from iOS colors table */
         :host([platform="ios"]) {
         }
@@ -44,6 +48,9 @@ class MorphPages extends LitElement {
       platform: {
         type: String,
         reflect: true
+      },
+      'current-page': {
+        type: String
       }
     };
   }
@@ -69,6 +76,17 @@ class MorphPages extends LitElement {
     // if(this.color) {
     //   this.colorAssigned(this.color);
     // }
+    if(changedProperties.has('current-page')) {
+      const currentPageName = this['current-page'];
+      const pages = this.getElementsByClassName('page');
+      for(let page of pages) {
+        if(page.getAttribute('name') == currentPageName) {
+          page.classList.add('page--current');
+        } else {
+          page.classList.remove('page--current');
+        }
+      }
+    }
   }
 
   connectedCallback() {
