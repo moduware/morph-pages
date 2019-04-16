@@ -18,6 +18,7 @@ class MorphPages extends LitElement {
       :host {
         display: block;
         position: relative;
+        overflow: hidden;
       }
 
       ::slotted(.page) {
@@ -89,12 +90,12 @@ class MorphPages extends LitElement {
       let oldPage = null;
       if(typeof changedProperties.get('current-page') != 'undefined') {
         oldPage = this.querySelector(`[name=${changedProperties.get('current-page')}]`);
-        await this.oldPageAnimation(oldPage);
+        //await this.oldPageAnimation(oldPage);
+        newPage.classList.add('page--current');
+        await this.pageChangeAnimation(oldPage, newPage);
         oldPage.classList.remove('page--current');
 
         // if old page existed applying animation to a new page
-        newPage.classList.add('page--current');
-        await this.newPageAnimation(newPage);
       } else {
         // if no old page then showing new page immidiately
         newPage.classList.add('page--current');
@@ -102,21 +103,63 @@ class MorphPages extends LitElement {
     }
   }
 
-  oldPageAnimation(node) {
+  pageChangeAnimation(oldPage, newPage) {
     return new Promise((resolve, reject) => {
       requestAnimationFrame((timestamp) => {
-        this.fadeOutAnimation(node, 1000, () => resolve(), timestamp);
+        this.androidBackwardAnimation(oldPage, newPage, 250, () => resolve(), timestamp);
+        //this.androidForwardAnimation(newPage, 250, () => resolve(), timestamp);
       });
     });
   }
 
-  newPageAnimation(node) {
-    node.style.opacity = 0;
-    return new Promise((resolve, reject) => {
+  androidForwardAnimation(node, duration, endCallback, currentTimestamp, startTimestamp = null) {
+    const INITIAL_OFFSET = 56;
+    // initial setup
+    if(startTimestamp == null) {
+      startTimestamp = currentTimestamp;
+      node.style.zIndex = 1;
+    }
+    const progress = currentTimestamp - startTimestamp;
+    const opacity = progress / duration;
+
+    node.style.opacity = opacity;
+
+    const offset = INITIAL_OFFSET - ((progress / duration) * INITIAL_OFFSET);
+    node.style.transform = `translate3d(0, ${offset}px, 0)`;
+
+    if(progress < duration) {
       requestAnimationFrame((timestamp) => {
-        this.fadeInAnimation(node, 1000, () => resolve(), timestamp);
+        this.androidForwardAnimation(node, duration, endCallback, timestamp, startTimestamp);
       });
-    });
+    } else {
+      node.removeAttribute('style');
+      endCallback();
+    }
+  }
+
+  androidBackwardAnimation(oldPage, newPage, duration, endCallback, currentTimestamp, startTimestamp = null) {
+    const END_OFFSET = 56;
+    if(startTimestamp == null) {
+      startTimestamp = currentTimestamp;
+      oldPage.style.zIndex = 1;
+    }
+    const progress = currentTimestamp - startTimestamp;
+    const opacity = 1 - progress / duration;
+
+    oldPage.style.opacity = opacity;
+
+    const offset = ((progress / duration) * END_OFFSET);
+    oldPage.style.transform = `translate3d(0, ${offset}px, 0)`;
+
+    if(progress < duration) {
+      requestAnimationFrame((timestamp) => {
+        this.androidBackwardAnimation(oldPage, newPage, duration, endCallback, timestamp, startTimestamp);
+      });
+    } else {
+      oldPage.removeAttribute('style');
+      newPage.removeAttribute('style');
+      endCallback();
+    }
   }
 
   fadeOutAnimation(node, duration, endCallback, currentTimestamp, startTimestamp = null) {
