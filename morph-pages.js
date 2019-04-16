@@ -79,7 +79,7 @@ class MorphPages extends LitElement {
     //NOTE: add default value to flat, raised, rounded, active, disabled, color, filled, big
   }
 
-  updated(changedProperties) {
+  async updated(changedProperties) {
     // if(this.color) {
     //   this.colorAssigned(this.color);
     // }
@@ -87,20 +87,74 @@ class MorphPages extends LitElement {
       const currentPageName = this['current-page'];
       let newPage = this.querySelector(`[name=${currentPageName}]`);
       let oldPage = null;
-      if(typeof changedProperties['current-page'] != 'undefined') {
-        oldPage = this.querySelector(`[name=${changedProperties['current-page']}]`);
+      if(typeof changedProperties.get('current-page') != 'undefined') {
+        oldPage = this.querySelector(`[name=${changedProperties.get('current-page')}]`);
+        await this.oldPageAnimation(oldPage);
+        oldPage.classList.remove('page--current');
+
+        // if old page existed applying animation to a new page
+        newPage.classList.add('page--current');
+        await this.newPageAnimation(newPage);
+      } else {
+        // if no old page then showing new page immidiately
+        newPage.classList.add('page--current');
       }
-      // for(let page of pages) {
-      //   if(page.getAttribute('name') == currentPageName) {
-      //     newPage = page;
-      //     //page.classList.add('page--current');
-      //   } else {
-      //
-      //     page.classList.remove('page--current');
-      //   }
-      // }
     }
   }
+
+  oldPageAnimation(node) {
+    return new Promise((resolve, reject) => {
+      requestAnimationFrame((timestamp) => {
+        this.fadeOutAnimation(node, 1000, () => resolve(), timestamp);
+      });
+    });
+  }
+
+  newPageAnimation(node) {
+    node.style.opacity = 0;
+    return new Promise((resolve, reject) => {
+      requestAnimationFrame((timestamp) => {
+        this.fadeInAnimation(node, 1000, () => resolve(), timestamp);
+      });
+    });
+  }
+
+  fadeOutAnimation(node, duration, endCallback, currentTimestamp, startTimestamp = null) {
+    if(startTimestamp == null) startTimestamp = currentTimestamp;
+
+    const progress = currentTimestamp - startTimestamp;
+    const opacity = 1 - progress / duration;
+
+    node.style.opacity = opacity;
+
+    if(progress < duration) {
+      requestAnimationFrame((timestamp) => {
+        this.fadeOutAnimation(node, duration, endCallback, timestamp, startTimestamp);
+      });
+    } else {
+      node.removeAttribute('style');
+      endCallback();
+    }
+  }
+
+  fadeInAnimation(node, duration, endCallback, currentTimestamp, startTimestamp = null) {
+    if(startTimestamp == null) startTimestamp = currentTimestamp;
+
+    const progress = currentTimestamp - startTimestamp;
+    const opacity = progress / duration;
+
+    node.style.opacity = opacity;
+
+    if(progress < duration) {
+      requestAnimationFrame((timestamp) => {
+        this.fadeInAnimation(node, duration, endCallback, timestamp, startTimestamp);
+      });
+    } else {
+      node.removeAttribute('style');
+      endCallback();
+    }
+  }
+
 
   connectedCallback() {
     super.connectedCallback();

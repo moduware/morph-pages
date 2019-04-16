@@ -39,11 +39,17 @@ morph-pages {
   height: 300px;
   border: 1px solid black;
 }
+.page--red {
+  background-color: red;
+}
+.page--blue {
+  background-color: blue;
+}
 </style>
 
           <morph-pages current-page="page1">
-            <div name="page1" class="page" style="background-color: red;">I'm simple page</div> 
-            <div name="page2" class="page" style="background-color: blue;">I'm simple page 2</div> 
+            <div name="page1" class="page page--red">I'm simple page</div> 
+            <div name="page2" class="page page--blue">I'm simple page 2</div> 
           </morph-pages>
           
           
