@@ -59,13 +59,16 @@ class MorphPages extends LitElement {
       },
       'current-page': {
         type: String
+      },
+      animation: {
+        type: String
       }
     };
   }
 
   constructor() {
     super();
-    //this.color = 'blue';
+    this.animation = 'forward';
   }
 
   /**
@@ -104,10 +107,18 @@ class MorphPages extends LitElement {
   }
 
   pageChangeAnimation(oldPage, newPage) {
+    if(this.animation == 'none') return;
+
     return new Promise((resolve, reject) => {
       requestAnimationFrame((timestamp) => {
-        this.androidBackwardAnimation(oldPage, newPage, 250, () => resolve(), timestamp);
-        //this.androidForwardAnimation(newPage, 250, () => resolve(), timestamp);
+        if(this.animation == 'forward') {
+          this.androidForwardAnimation(newPage, 250, () => resolve(), timestamp);
+        } else if(this.animation == 'backward') {
+          this.androidBackwardAnimation(oldPage, newPage, 250, () => resolve(), timestamp);
+        } else {
+          console.warn('Unknown animation function requested!');
+          resolve();
+        }
       });
     });
   }
@@ -161,43 +172,6 @@ class MorphPages extends LitElement {
       endCallback();
     }
   }
-
-  fadeOutAnimation(node, duration, endCallback, currentTimestamp, startTimestamp = null) {
-    if(startTimestamp == null) startTimestamp = currentTimestamp;
-
-    const progress = currentTimestamp - startTimestamp;
-    const opacity = 1 - progress / duration;
-
-    node.style.opacity = opacity;
-
-    if(progress < duration) {
-      requestAnimationFrame((timestamp) => {
-        this.fadeOutAnimation(node, duration, endCallback, timestamp, startTimestamp);
-      });
-    } else {
-      node.removeAttribute('style');
-      endCallback();
-    }
-  }
-
-  fadeInAnimation(node, duration, endCallback, currentTimestamp, startTimestamp = null) {
-    if(startTimestamp == null) startTimestamp = currentTimestamp;
-
-    const progress = currentTimestamp - startTimestamp;
-    const opacity = progress / duration;
-
-    node.style.opacity = opacity;
-
-    if(progress < duration) {
-      requestAnimationFrame((timestamp) => {
-        this.fadeInAnimation(node, duration, endCallback, timestamp, startTimestamp);
-      });
-    } else {
-      node.removeAttribute('style');
-      endCallback();
-    }
-  }
-
 
   connectedCallback() {
     super.connectedCallback();
