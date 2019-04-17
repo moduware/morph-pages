@@ -38,6 +38,31 @@ class MorphPages extends LitElement {
       :host([platform="android"]) {
       }
 
+      #shadow {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      #shadow::before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0; left: -16px; bottom: 0;
+        width: 16px;
+        background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 10%, rgba(0,0,0,0.01) 50%, rgba(0,0,0,0.2) 100%);
+      }
+
+      #overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        pointer-events: none;
+        z-index: 1;
+        background: rgba(0,0,0,0.1);
+        opacity: 0;
+      }
+
       `
     ];
   }
@@ -46,6 +71,8 @@ class MorphPages extends LitElement {
     return html`
       <div class="container">
         <slot></slot>
+        <div id="shadow"></div>
+        <div id="overlay"></div>
       </div>
     `;
   }
@@ -76,6 +103,8 @@ class MorphPages extends LitElement {
    */
   firstUpdated() {
     super.firstUpdated();
+    this.$shadow = this.shadowRoot.getElementById('shadow');
+    this.$overlay = this.shadowRoot.getElementById('overlay');
     // check first if platform assigned in html markup before using getPlatform to auto detect platform
     if(!this.hasAttribute('platform')) {
       this.platform = getPlatform();
@@ -111,10 +140,18 @@ class MorphPages extends LitElement {
 
     return new Promise((resolve, reject) => {
       requestAnimationFrame((timestamp) => {
-        if(this.animation == 'forward') {
-          this.androidForwardAnimation(newPage, 250, () => resolve(), timestamp);
-        } else if(this.animation == 'backward') {
+        if(this.platform == 'ios' && this.animation == 'forward') {
+          this.iosForwardAnimation(oldPage, newPage, 400, () => resolve(), timestamp);
+
+        } else if(this.platform == 'ios' && this.animation == 'backward') {
+          this.iosBackwardAnimation(oldPage, newPage, 400, () => resolve(), timestamp);
+
+        } else if(this.platform == 'android' && this.animation == 'forward') {
+          this.androidForwardAnimation(oldPage, newPage, 250, () => resolve(), timestamp);
+
+        } else if(this.platform == 'android' && this.animation == 'backward') {
           this.androidBackwardAnimation(oldPage, newPage, 250, () => resolve(), timestamp);
+
         } else {
           console.warn('Unknown animation function requested!');
           resolve();
@@ -123,27 +160,111 @@ class MorphPages extends LitElement {
     });
   }
 
-  androidForwardAnimation(node, duration, endCallback, currentTimestamp, startTimestamp = null) {
+  iosForwardAnimation(oldPage, newPage, duration, endCallback, currentTimestamp, startTimestamp = null) {
+    const PAGE_OFFSET_LEFT_MAX = -20; // percent
+    const PAGE_OFFSET_RIGHT_MAX = 100; // percent
+    if(startTimestamp == null) {
+      startTimestamp = currentTimestamp;
+      this.$shadow.style.right = 0;
+      newPage.style.zIndex = 2;
+    }
+
+    const progress = currentTimestamp - startTimestamp;
+    let timing = progress / duration;
+    if(timing > 1) timing = 1;
+    const opacity = progress / duration;
+
+    // update shadow & overlay element here
+    this.$shadow.style.opacity = opacity;
+    this.$overlay.style.opacity = opacity;
+
+    const oldPageOffset = this.easeInOutQuad(timing) * PAGE_OFFSET_LEFT_MAX;
+    const newPageOffset = 100 - this.easeInOutQuad(timing) * PAGE_OFFSET_RIGHT_MAX;
+
+    oldPage.style.transform = `translate3d(${oldPageOffset}%,0,0)`;
+    newPage.style.transform = `translate3d(${newPageOffset}%,0,0)`;
+    this.$shadow.style.transform = `translate3d(${newPageOffset}%,0,0)`;
+
+    if(progress < duration) {
+      requestAnimationFrame((timestamp) => {
+        this.iosForwardAnimation(oldPage, newPage, duration, endCallback, timestamp, startTimestamp);
+      });
+    } else {
+      oldPage.removeAttribute('style');
+      newPage.removeAttribute('style');
+      this.$shadow.removeAttribute('style');
+      this.$overlay.removeAttribute('style');
+      endCallback();
+    }
+  }
+
+  iosBackwardAnimation(oldPage, newPage, duration, endCallback, currentTimestamp, startTimestamp = null) {
+    const PAGE_OFFSET_LEFT_MAX = -20; // percent
+    const PAGE_OFFSET_RIGHT_MAX = 100; // percent
+    if(startTimestamp == null) {
+      startTimestamp = currentTimestamp;
+      this.$shadow.style.right = 0;
+      oldPage.style.zIndex = 2;
+    }
+
+    const progress = currentTimestamp - startTimestamp;
+    let timing = progress / duration;
+    if(timing > 1) timing = 1;
+    const opacity = 1 - progress / duration;
+
+    // update shadow & overlay element here
+    this.$shadow.style.opacity = opacity;
+    this.$overlay.style.opacity = opacity;
+
+    const oldPageOffset = this.easeInOutQuad(timing) * PAGE_OFFSET_RIGHT_MAX;
+    const newPageOffset = PAGE_OFFSET_LEFT_MAX - this.easeInOutQuad(timing) * PAGE_OFFSET_LEFT_MAX;
+
+    oldPage.style.transform = `translate3d(${oldPageOffset}%,0,0)`;
+    newPage.style.transform = `translate3d(${newPageOffset}%,0,0)`;
+    this.$shadow.style.transform = `translate3d(${oldPageOffset}%,0,0)`;
+
+    if(progress < duration) {
+      requestAnimationFrame((timestamp) => {
+        this.iosBackwardAnimation(oldPage, newPage, duration, endCallback, timestamp, startTimestamp);
+      });
+    } else {
+      oldPage.removeAttribute('style');
+      newPage.removeAttribute('style');
+      this.$shadow.removeAttribute('style');
+      this.$overlay.removeAttribute('style');
+      endCallback();
+    }
+
+  }
+
+  /**
+   *  animation math used by forwardIosAnimationStep and backwardIosAnimationStep
+   */
+  easeInOutQuad(t) {
+    return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+  }
+
+  androidForwardAnimation(oldPage, newPage, duration, endCallback, currentTimestamp, startTimestamp = null) {
     const INITIAL_OFFSET = 56;
     // initial setup
     if(startTimestamp == null) {
       startTimestamp = currentTimestamp;
-      node.style.zIndex = 1;
+      newPage.style.zIndex = 1;
     }
     const progress = currentTimestamp - startTimestamp;
     const opacity = progress / duration;
 
-    node.style.opacity = opacity;
+    newPage.style.opacity = opacity;
 
     const offset = INITIAL_OFFSET - ((progress / duration) * INITIAL_OFFSET);
-    node.style.transform = `translate3d(0, ${offset}px, 0)`;
+    newPage.style.transform = `translate3d(0, ${offset}px, 0)`;
 
     if(progress < duration) {
       requestAnimationFrame((timestamp) => {
-        this.androidForwardAnimation(node, duration, endCallback, timestamp, startTimestamp);
+        this.androidForwardAnimation(oldPage, newPage, duration, endCallback, timestamp, startTimestamp);
       });
     } else {
-      node.removeAttribute('style');
+      newPage.removeAttribute('style');
       endCallback();
     }
   }
