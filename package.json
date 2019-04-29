@@ -1,16 +1,16 @@
 {
   "description": "Button that morphs for current mobile OS",
-  "name": "@moduware/morph-button",
+  "name": "@moduware/morph-pages",
   "version": "2.0.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/moduware/morph-button"
+    "url": "https://github.com/moduware/morph-pages"
   },
   "scripts": {
     "start": "polymer serve --npm --module-resolution=node",
     "test": "wct"
   },
-  "main": "morph-button.js",
+  "main": "morph-pages.js",
   "contributors": [
     "Clint Pijuan <clintp1@gmail.com>",
     "Alex Chernov <alexusblack@gmail.com>"
