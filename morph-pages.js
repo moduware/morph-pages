@@ -26,7 +26,7 @@ class MorphPages extends LitElement {
         top: 0; left: 0; bottom: 0; right: 0;
       }
 
-      ::slotted(:not(.page--current)) {
+      ::slotted(.page:not(.page--current)) {
         display: none;
       }
 
@@ -118,10 +118,10 @@ class MorphPages extends LitElement {
     // }
     if(changedProperties.has('current-page')) {
       const currentPageName = this['current-page'];
-      let newPage = this.querySelector(`[name=${currentPageName}]`);
+      let newPage = this.querySelector(`[name="${currentPageName}"]`);
       let oldPage = null;
       if(typeof changedProperties.get('current-page') != 'undefined') {
-        oldPage = this.querySelector(`[name=${changedProperties.get('current-page')}]`);
+        oldPage = this.querySelector(`[name="${changedProperties.get('current-page')}"]`);
         //await this.oldPageAnimation(oldPage);
         newPage.classList.add('page--current');
         await this.pageChangeAnimation(oldPage, newPage);
