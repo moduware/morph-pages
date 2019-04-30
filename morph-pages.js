@@ -96,6 +96,9 @@ class MorphPages extends LitElement {
   constructor() {
     super();
     this.animation = 'forward';
+    this._animationIsRunning = false;
+    this._fastforwardRequested = false;
+    this._animationCompletionCallback = null;
   }
 
   /**
@@ -117,6 +120,12 @@ class MorphPages extends LitElement {
     //   this.colorAssigned(this.color);
     // }
     if(changedProperties.has('current-page')) {
+      // check if animation is running
+      if(this._animationIsRunning) {
+        console.info('fast finger detected!');
+        // fastforward the animation to the end
+        await this.fastforwardCurrentAnimation();
+      }
       const currentPageName = this['current-page'];
       let newPage = this.querySelector(`[name="${currentPageName}"]`);
       let oldPage = null;
@@ -135,22 +144,46 @@ class MorphPages extends LitElement {
     }
   }
 
+  async fastforwardCurrentAnimation() {
+    // notify current animation that fastforward is requested
+    this._fastforwardRequested = true;
+    // wait for animation complete event
+    await this.waitForAnimationCompletion();
+    // disable animation fastforward request
+    this._fastforwardRequested = false;
+  }
+
+  waitForAnimationCompletion() {
+    return new Promise((resolve, reject) => {
+      if(this._animationCompletionCallback != null) throw 'Already listening!';
+      this._animationCompletionCallback = () => {
+        this._animationCompletionCallback = null;
+        resolve();
+      };
+    });
+  }
+
   pageChangeAnimation(oldPage, newPage) {
     if(this.animation == 'none') return;
 
     return new Promise((resolve, reject) => {
+      var resolveHandler = () => {
+        resolve();
+        if(this._animationCompletionCallback != null) this._animationCompletionCallback();
+      }
+
       requestAnimationFrame((timestamp) => {
         if(this.platform == 'ios' && this.animation == 'forward') {
-          this.iosForwardAnimation(oldPage, newPage, 400, () => resolve(), timestamp);
+          this.iosForwardAnimation(oldPage, newPage, 400, () => resolveHandler(), timestamp);
 
         } else if(this.platform == 'ios' && this.animation == 'backward') {
-          this.iosBackwardAnimation(oldPage, newPage, 400, () => resolve(), timestamp);
+          this.iosBackwardAnimation(oldPage, newPage, 400, () => resolveHandler(), timestamp);
 
         } else if(this.platform == 'android' && this.animation == 'forward') {
-          this.androidForwardAnimation(oldPage, newPage, 250, () => resolve(), timestamp);
+          this.androidForwardAnimation(oldPage, newPage, 2500, () => resolveHandler(), timestamp);
 
         } else if(this.platform == 'android' && this.animation == 'backward') {
-          this.androidBackwardAnimation(oldPage, newPage, 250, () => resolve(), timestamp);
+          this.androidBackwardAnimation(oldPage, newPage, 2500, () => resolveHandler(), timestamp);
 
         } else {
           console.warn('Unknown animation function requested!');
@@ -164,12 +197,16 @@ class MorphPages extends LitElement {
     const PAGE_OFFSET_LEFT_MAX = -20; // percent
     const PAGE_OFFSET_RIGHT_MAX = 100; // percent
     if(startTimestamp == null) {
+      this._animationIsRunning = true;
       startTimestamp = currentTimestamp;
       this.$shadow.style.right = 0;
       newPage.style.zIndex = 2;
     }
 
-    const progress = currentTimestamp - startTimestamp;
+    let progress = currentTimestamp - startTimestamp;
+    if(this._fastforwardRequested) {
+      progress = duration; // 100%
+    }
     let timing = progress / duration;
     if(timing > 1) timing = 1;
     const opacity = progress / duration;
@@ -194,6 +231,7 @@ class MorphPages extends LitElement {
       newPage.removeAttribute('style');
       this.$shadow.removeAttribute('style');
       this.$overlay.removeAttribute('style');
+      this._animationIsRunning = false;
       endCallback();
     }
   }
@@ -202,12 +240,16 @@ class MorphPages extends LitElement {
     const PAGE_OFFSET_LEFT_MAX = -20; // percent
     const PAGE_OFFSET_RIGHT_MAX = 100; // percent
     if(startTimestamp == null) {
+      this._animationIsRunning = true;
       startTimestamp = currentTimestamp;
       this.$shadow.style.right = 0;
       oldPage.style.zIndex = 2;
     }
 
-    const progress = currentTimestamp - startTimestamp;
+    let progress = currentTimestamp - startTimestamp;
+    if(this._fastforwardRequested) {
+      progress = duration; // 100%
+    }
     let timing = progress / duration;
     if(timing > 1) timing = 1;
     const opacity = 1 - progress / duration;
@@ -232,6 +274,7 @@ class MorphPages extends LitElement {
       newPage.removeAttribute('style');
       this.$shadow.removeAttribute('style');
       this.$overlay.removeAttribute('style');
+      this._animationIsRunning = false;
       endCallback();
     }
 
@@ -248,10 +291,14 @@ class MorphPages extends LitElement {
     const INITIAL_OFFSET = 56;
     // initial setup
     if(startTimestamp == null) {
+      this._animationIsRunning = true;
       startTimestamp = currentTimestamp;
       newPage.style.zIndex = 1;
     }
-    const progress = currentTimestamp - startTimestamp;
+    let progress = currentTimestamp - startTimestamp;
+    if(this._fastforwardRequested) {
+      progress = duration; // 100%
+    }
     const opacity = progress / duration;
 
     newPage.style.opacity = opacity;
@@ -265,6 +312,7 @@ class MorphPages extends LitElement {
       });
     } else {
       newPage.removeAttribute('style');
+      this._animationIsRunning = false;
       endCallback();
     }
   }
@@ -272,10 +320,14 @@ class MorphPages extends LitElement {
   androidBackwardAnimation(oldPage, newPage, duration, endCallback, currentTimestamp, startTimestamp = null) {
     const END_OFFSET = 56;
     if(startTimestamp == null) {
+      this._animationIsRunning = true;
       startTimestamp = currentTimestamp;
       oldPage.style.zIndex = 1;
     }
-    const progress = currentTimestamp - startTimestamp;
+    let progress = currentTimestamp - startTimestamp;
+    if(this._fastforwardRequested) {
+      progress = duration; // 100%
+    }
     const opacity = 1 - progress / duration;
 
     oldPage.style.opacity = opacity;
@@ -290,6 +342,7 @@ class MorphPages extends LitElement {
     } else {
       oldPage.removeAttribute('style');
       newPage.removeAttribute('style');
+      this._animationIsRunning = false;
       endCallback();
     }
   }
