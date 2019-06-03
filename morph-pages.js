@@ -180,10 +180,10 @@ class MorphPages extends LitElement {
           this.iosBackwardAnimation(oldPage, newPage, 400, () => resolveHandler(), timestamp);
 
         } else if(this.platform == 'android' && this.animation == 'forward') {
-          this.androidForwardAnimation(oldPage, newPage, 2500, () => resolveHandler(), timestamp);
+          this.androidForwardAnimation(oldPage, newPage, 250, () => resolveHandler(), timestamp);
 
         } else if(this.platform == 'android' && this.animation == 'backward') {
-          this.androidBackwardAnimation(oldPage, newPage, 2500, () => resolveHandler(), timestamp);
+          this.androidBackwardAnimation(oldPage, newPage, 250, () => resolveHandler(), timestamp);
 
         } else {
           console.warn('Unknown animation function requested!');
