@@ -21,6 +21,10 @@ class MorphPages extends LitElement {
         overflow: hidden;
       }
 
+      :host .container {
+        height: inherit;
+      }
+
       ::slotted(.page) {
         position: absolute;
         top: 0; left: 0; bottom: 0; right: 0;
